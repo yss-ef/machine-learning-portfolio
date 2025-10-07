@@ -55,6 +55,30 @@ def calculer_regression_matricielle(chemin_fichier_excel):
         print(f"Une erreur est survenue : {e}")
         return None
 
+
+
+def calculer_erreur(chemin_fichier_excel, a, b):
+    '''
+     Calculer les erreures commises lors des calcules.
+     '''
+
+    try:
+        donnees = pd.read_excel(chemin_fichier_excel, header=None)
+        Y_reels = donnees.iloc[:, 0].values  # Y est la colonne 0
+        X_obs = donnees.iloc[:, 1].values  # X est la colonne 1
+
+        predictions = a * X_obs + b
+        sse = np.sum((predictions - Y_reels) ** 2)
+        return sse
+
+    except FileNotFoundError:
+        print(f"Erreur : Le fichier '{chemin_fichier_excel}' n'a pas été trouvé.")
+        return None
+    except Exception as e:
+        print(f"Une erreur est survenue : {e}")
+        return None
+
+
 # --- Utilisation de l'algorithme ---
 # Créez un fichier excel nommé 'donnees_projet.xlsx' avec vos données
 # ou remplacez le nom du fichier.
@@ -67,3 +91,4 @@ if coefficients:
     print(f"L'ordonnée à l'origine (b) est : {b:.4f}")
     print(f"La pente (a) est : {a:.4f}")
     print(f"\nLe modèle de régression est : Y = {a:.4f}X + {b:.4f}")
+    print(f"\nL'MSE de ce modele est : MSE = {calculer_erreur(chemin_fichier, a, b):.4f}")
