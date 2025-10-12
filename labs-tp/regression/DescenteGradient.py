@@ -21,7 +21,7 @@ b = 0.0
 # Hyperparamètres de l'algorithme
 learning_rate = 0.01  # Le "pas" que l'on fait à chaque itération
 iterations = 1000  # Le nombre de fois où on répète le calcul
-
+git pull origin main
 n = float(len(X))  # Nombre de points de données
 
 # Pour stocker l'historique de l'erreur et la visualiser plus tard
