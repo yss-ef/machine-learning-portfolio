@@ -2,17 +2,6 @@ import pandas as pd
 import numpy as np
 
 def calculer_regression_matricielle(chemin_fichier_excel):
-    """
-    Calcule les coefficients d'une régression linéaire simple (Y = aX + b)
-    en utilisant la méthode matricielle de l'équation normale.
-
-    Args:
-        chemin_fichier_excel (str): Le chemin vers le fichier Excel.
-                                    La 1ère colonne doit être Y, la 2ème X.
-
-    Returns:
-        tuple: Un tuple contenant les coefficients (b, a).
-    """
     try:
         # Étape 1 : Lecture des données
         donnees = pd.read_excel(chemin_fichier_excel, header=None)
@@ -24,7 +13,7 @@ def calculer_regression_matricielle(chemin_fichier_excel):
         # Étape 2 : Construction de la matrice de design
         # On ajoute une colonne de 1 à gauche de nos observations X
         colonne_de_uns = np.ones((n, 1))
-        X_design = np.hstack((colonne_de_uns, X_obs))
+        X_design = np.hstack((X_obs, colonne_de_uns))
 
         print("Matrice Y:\n", Y)
         print("\nMatrice de Design (X_design):\n", X_design)
@@ -43,8 +32,8 @@ def calculer_regression_matricielle(chemin_fichier_excel):
         beta = XTX_inv @ XTY
 
         # Étape 4 : Extraction des coefficients
-        b = beta[0][0]  # Ordonnée à l'origine
-        a = beta[1][0]  # Pente
+        a = beta[0][0]  # Pente
+        b = beta[1][0]  # Ordonnée à l'origine
 
         return (b, a)
 
