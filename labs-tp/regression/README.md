@@ -107,3 +107,5 @@ The terminal will display the calculated slope (`a`), intercept (`b`), and the f
 ---
 
 *Authored by Youssef Fellah.*
+
+*Developed as part of the 2nd year Engineering Cycle - Mundiapolis University.*
