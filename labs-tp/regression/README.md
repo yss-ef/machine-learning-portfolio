@@ -103,3 +103,7 @@ python ModRegression-1.py
 
 **4. Review the Output:**
 The terminal will display the calculated slope (`a`), intercept (`b`), and the final equation of your mathematical model. For the Gradient Descent method, graphical plots will also be generated.
+
+---
+
+*Authored by Youssef Fellah.*
