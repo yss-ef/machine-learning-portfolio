@@ -1,100 +1,105 @@
-# 📈 Projet de Régression Linéaire Simple
+# 📈 Simple Linear Regression Implementations
 
-Ce projet a été réalisé dans le cadre du module d'**Analyse des Données Multidimensionnelles**. Il présente deux approches pour calculer les coefficients d'un modèle de régression linéaire simple ($Y = aX + b$) à partir de données fournies dans un fichier Excel.
+> **Academic Project - Multidimensional Data Analysis**
+> This repository presents a from-scratch Python implementation of Simple Linear Regression (). It explores and contrasts two fundamental approaches for calculating the model's coefficients using datasets provided in Excel format.
 
-1.  **Méthode 1 : Descente du Gradient (Approche Itérative)**
-2.  **Méthode 2 : Équation Normale (Approche Matricielle)**
+## 📑 Table of Contents
 
----
----
+* [Methodology Comparison](https://www.google.com/search?q=%23-methodology-comparison)
+* [Method 1: Gradient Descent](https://www.google.com/search?q=%23-method-1-gradient-descent-iterative-approach)
+* [Method 2: Normal Equation](https://www.google.com/search?q=%23-method-2-normal-equation-analytical-approach)
+* [Installation & Setup](https://www.google.com/search?q=%23%EF%B8%8F-installation--setup)
+* [Usage Guide](https://www.google.com/search?q=%23-usage-guide)
 
-## Méthode 1 : Descente du Gradient (Approche Itérative)
+## ⚖️ Methodology Comparison
 
-Cette première approche utilise la **descente du gradient**, un algorithme d'optimisation qui minimise l'erreur quadratique moyenne de manière itérative pour trouver les meilleurs coefficients.
+| Feature | Gradient Descent | Normal Equation |
+| --- | --- | --- |
+| **Approach** | Iterative Optimization | Analytical / Matrix Algebra |
+| **Hyperparameters** | Requires tuning (Learning Rate, Epochs) | None |
+| **Computational Complexity** | Efficient for massive datasets () | High for very large feature sets () |
+| **Dependencies** | `pandas`, `matplotlib` | `pandas`, `numpy` |
 
-### ✨ Fonctionnalités
+## 📉 Method 1: Gradient Descent (Iterative Approach)
 
--   **Lecture de données** depuis un fichier Excel (`.xlsx`).
--   **Calcul itératif** des coefficients : la pente `a` et l'ordonnée à l'origine `b`.
--   **Visualisation des résultats** avec Matplotlib, montrant la droite de régression et la courbe de diminution de l'erreur.
--   **Paramètres ajustables** comme le taux d'apprentissage et le nombre d'itérations.
+This approach utilizes **Gradient Descent**, a first-order iterative optimization algorithm used to minimize the Mean Squared Error (MSE) cost function and find the optimal coefficients.
 
-### ✅ Prérequis
+### ✨ Features
 
--   **Pandas** : Pour la lecture et la manipulation des données.
--   **Matplotlib** : Pour la visualisation des graphiques.
+* **Data Ingestion:** Reads datasets directly from `.xlsx` files.
+* **Iterative Calculation:** Progressively updates the slope (`a`) and intercept (`b`).
+* **Data Visualization:** Uses Matplotlib to plot the regression line against the scatter data and visualizes the cost function's convergence curve.
+* **Hyperparameter Tuning:** Adjustable learning rate and iteration count.
 
-Vous pouvez les installer avec la commande suivante :
+### 🧠 Concept
+
+Gradient descent aims to locate the minimum of the error function by moving in the direction of the steepest descent. Similar to a hiker finding the lowest point of a valley in dense fog by taking steps down the steepest slope, the algorithm updates the coefficients at each iteration until it converges to the optimal values.
+
+## 🧮 Method 2: Normal Equation (Analytical Approach)
+
+This second approach leverages the **Ordinary Least Squares (OLS)** method via the Normal Equation, utilizing linear algebra to find a direct, analytical solution.
+
+### ✨ Features
+
+* **Data Ingestion:** Reads datasets directly from `.xlsx` files.
+* **Automatic Calculation:** Instantly computes the exact slope (`a`) and intercept (`b`).
+* **Pure Implementation:** Relies strictly on NumPy matrix operations without high-level Machine Learning libraries (like Scikit-learn).
+
+### 🧠 Concept
+
+The calculation provides a closed-form solution to the least squares problem. The Normal Equation is defined as:
+
+Where:
+
+*  is the vector containing the coefficients `b` (intercept) and `a` (slope).
+*  is the vector of the dependent variable values.
+*  is the design matrix, consisting of a column of 1s (for the intercept) and a column containing the independent variable values.
+
+## 🛠️ Installation & Setup
+
+To run this project on **Fedora 43**, it is highly recommended to use a Python virtual environment to avoid conflicts with system packages.
+
+**1. Create and activate a virtual environment:**
+
 ```bash
-pip install pandas matplotlib openpyxl
-```
-### 🧠 Explication de la Méthode
+python3 -m venv regression_env
+source regression_env/bin/activate
 
-La descente du gradient cherche à trouver le minimum d'une fonction (ici, la fonction d'erreur) en suivant la direction de la pente la plus forte. Tel un randonneur cherchant le point le plus bas d'une vallée dans le brouillard, il procède par petits pas successifs. La mise à jour des coefficients se fait à chaque itération jusqu'à ce qu'ils convergent vers les valeurs optimales.
-
----
-
-## Méthode 2 : Équation Normale (Approche Matricielle)
-
-Cette seconde approche utilise la méthode des moindres carrés via l'équation normale, qui s'appuie sur des opérations d'algèbre linéaire (matrices) pour trouver une solution directe et analytique.
-
-### ✨ Fonctionnalités
-
-* Lecture de données depuis un fichier Excel (`.xlsx`).
-
-* Calcul automatique des coefficients de la régression : la pente `a` et l'ordonnée à l'origine `b`.
-
-* Implémentation pure de la formule matricielle sans utiliser de bibliothèques de machine learning comme Scikit-learn.
-
-* Affichage clair du modèle de régression final.
-
-### ✅ Prérequis
-
-* **Pandas** : Pour la lecture et la manipulation des données.
-
-* **NumPy** : Pour les calculs numériques et matriciels.
-
-Vous pouvez les installer avec la commande suivante :
-```Bash
-pip install pandas numpy openpyxl
 ```
 
-### 🚀 Comment l'utiliser ?
+**2. Install required dependencies:**
 
-1. 📝 Préparez votre fichier de données :
+```bash
+pip install pandas numpy matplotlib openpyxl
 
-   * Créez un fichier Excel (par exemple, donnees.xlsx).
+```
 
-   * La première colonne doit contenir vos données pour la variable dépendante (Y).
+## 🚀 Usage Guide
 
-   * La deuxième colonne doit contenir vos données pour la variable indépendante (X).
+**1. Prepare your dataset:**
 
-   * Le fichier ne doit pas contenir d'en-têtes.
+* Create an Excel file (e.g., `donnees.xlsx`).
+* **Column A:** Dependent variable data ().
+* **Column B:** Independent variable data ().
+* *Note: The file must not contain headers.*
 
-2. 🔧 Modifiez le nom du fichier dans le script :
+**2. Configure the script:**
 
-   * Ouvrez le fichier de script Python.
+* Open the Python script (e.g., `ModRegression-1.py`).
+* Update the file path variable to match your dataset:
+```python
+chemin_fichier = 'donnees.xlsx'
 
-   * Modifiez la ligne chemin_fichier = 'donnees_projet.xlsx' pour indiquer le chemin de votre propre fichier.
-  
-3. ▶️ Exécutez le script :
+```
 
-   * Ouvrez un terminal dans le dossier du projet et lancez la commande suivante :
-     ```Bash
-     python ModRegression-1.py
-     ```
-4. 👀 Consultez les résultats :
-    * Le script affichera la pente (a) et l'ordonnée à l'origine (b) calculées, ainsi que l'équation finale de votre modèle.
-  
-### 🧠 Explication de la Méthode
 
-Le calcul est basé sur l'équation normale, qui fournit une solution analytique au problème des moindres carrés. La formule est la suivante :
 
-$$\hat{\beta} = (X^T X)^{-1} X^T Y$$
+**3. Execute the script:**
 
-Où :
+```bash
+python ModRegression-1.py
 
-* $\hat{\beta} est le vecteur contenant les coefficients `b` (intercept) et `a` (pente).
-* Y est le vecteur des valeurs de la variable dépendante.
-* X est la matrice de design, composée d'une colonne de 1 (pour l'intercept) et d'une colonne avec les valeurs de la variable indépendante.
+```
 
+**4. Review the Output:**
+The terminal will display the calculated slope (`a`), intercept (`b`), and the final equation of your mathematical model. For the Gradient Descent method, graphical plots will also be generated.
