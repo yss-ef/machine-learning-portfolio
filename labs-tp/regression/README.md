@@ -1,111 +1,85 @@
-# 📈 Simple Linear Regression Implementations
+# Linear Regression Optimization: Algorithmic Implementation
 
-> **Academic Project - Multidimensional Data Analysis**
-> This repository presents a from-scratch Python implementation of Simple Linear Regression (). It explores and contrasts two fundamental approaches for calculating the model's coefficients using datasets provided in Excel format.
+A comparative study and from-scratch implementation of Linear Regression algorithms in Python. This project explores the mathematical optimization of regression models using both iterative (Gradient Descent) and analytical (Normal Equation) approaches, bypassing high-level machine learning frameworks to focus on core algorithmic logic.
 
-## 📑 Table of Contents
+## Technical Overview
 
-* [Methodology Comparison](https://www.google.com/search?q=%23-methodology-comparison)
-* [Method 1: Gradient Descent](https://www.google.com/search?q=%23-method-1-gradient-descent-iterative-approach)
-* [Method 2: Normal Equation](https://www.google.com/search?q=%23-method-2-normal-equation-analytical-approach)
-* [Installation & Setup](https://www.google.com/search?q=%23%EF%B8%8F-installation--setup)
-* [Usage Guide](https://www.google.com/search?q=%23-usage-guide)
+The system evaluates two distinct methodologies for solving the linear least squares problem, providing a deep-dive into optimization theory and numerical analysis.
 
-## ⚖️ Methodology Comparison
+### Core Stack
+*   **Engine**: Python 3.10+
+*   **Numerical Analysis**: NumPy / Pandas
+*   **Data Visualization**: Matplotlib
+*   **Data Format**: Excel / OpenPyXL
 
-| Feature | Gradient Descent | Normal Equation |
-| --- | --- | --- |
-| **Approach** | Iterative Optimization | Analytical / Matrix Algebra |
-| **Hyperparameters** | Requires tuning (Learning Rate, Epochs) | None |
-| **Computational Complexity** | Efficient for massive datasets () | High for very large feature sets () |
-| **Dependencies** | `pandas`, `matplotlib` | `pandas`, `numpy` |
+---
 
-## 📉 Method 1: Gradient Descent (Iterative Approach)
+## Optimization Methodologies
 
-This approach utilizes **Gradient Descent**, a first-order iterative optimization algorithm used to minimize the Mean Squared Error (MSE) cost function and find the optimal coefficients.
+### 1. Gradient Descent (Iterative Approach)
+A first-order iterative optimization algorithm for finding the local minimum of the Mean Squared Error (MSE) cost function.
+*   **Mechanism**: Implements partial derivatives (gradients) for weight ($m$) and bias ($b$) updates.
+*   **Mathematical Foundation**:
+    $$\theta_{j} := \theta_{j} - \alpha \frac{\partial}{\partial \theta_{j}} J(\theta)$$
+*   **Implementation**: Features convergence monitoring via cost history tracking and dynamic hyperparameter tuning (Learning Rate $\alpha$, Epochs).
 
-### ✨ Features
+### 2. Normal Equation (Analytical Approach)
+A direct solution using linear algebra to find the global minimum of the cost function without iteration.
+*   **Mechanism**: Leverages the Ordinary Least Squares (OLS) closed-form solution.
+*   **Mathematical Foundation**:
+    $$\theta = (X^{T}X)^{-1}X^{T}y$$
+*   **Implementation**: Utilizes NumPy matrix operations to handle the design matrix and target vectors, providing an exact solution for datasets where $X^{T}X$ is invertible.
 
-* **Data Ingestion:** Reads datasets directly from `.xlsx` files.
-* **Iterative Calculation:** Progressively updates the slope (`a`) and intercept (`b`).
-* **Data Visualization:** Uses Matplotlib to plot the regression line against the scatter data and visualizes the cost function's convergence curve.
-* **Hyperparameter Tuning:** Adjustable learning rate and iteration count.
+---
 
-### 🧠 Concept
+## Technical Features
 
-Gradient descent aims to locate the minimum of the error function by moving in the direction of the steepest descent. Similar to a hiker finding the lowest point of a valley in dense fog by taking steps down the steepest slope, the algorithm updates the coefficients at each iteration until it converges to the optimal values.
+### Data Processing Pipeline
+*   **Ingestion**: Direct extraction of features and labels from raw Excel data.
+*   **Feature Mapping**: Automated mapping of independent ($X$) and dependent ($Y$) variables.
+*   **Validation**: Error handling for missing data or invalid file paths.
 
-## 🧮 Method 2: Normal Equation (Analytical Approach)
+### Analytics & Visualization
+*   **Cost Convergence**: Graphical representation of error reduction over time to validate learning rate stability.
+*   **Regression Modeling**: Overlay of the calculated model $Y = mX + b$ against the raw scatter data.
+*   **Performance Comparison**: Evaluation of iteration count vs. precision for the Gradient Descent engine.
 
-This second approach leverages the **Ordinary Least Squares (OLS)** method via the Normal Equation, utilizing linear algebra to find a direct, analytical solution.
+---
 
-### ✨ Features
+## Project Structure
 
-* **Data Ingestion:** Reads datasets directly from `.xlsx` files.
-* **Automatic Calculation:** Instantly computes the exact slope (`a`) and intercept (`b`).
-* **Pure Implementation:** Relies strictly on NumPy matrix operations without high-level Machine Learning libraries (like Scikit-learn).
-
-### 🧠 Concept
-
-The calculation provides a closed-form solution to the least squares problem. The Normal Equation is defined as:
-
-Where:
-
-*  is the vector containing the coefficients `b` (intercept) and `a` (slope).
-*  is the vector of the dependent variable values.
-*  is the design matrix, consisting of a column of 1s (for the intercept) and a column containing the independent variable values.
-
-## 🛠️ Installation & Setup
-
-To run this project on **Fedora 43**, it is highly recommended to use a Python virtual environment to avoid conflicts with system packages.
-
-**1. Create and activate a virtual environment:**
-
-```bash
-python3 -m venv regression_env
-source regression_env/bin/activate
-
+```text
+├── DescenteGradient.py # Iterative optimization engine
+├── ModRegression-1.py  # Analytical regression model
+├── test.xlsx           # Sample dataset for validation
+└── README.md           # System documentation
 ```
 
-**2. Install required dependencies:**
+---
 
-```bash
-pip install pandas numpy matplotlib openpyxl
+## Installation & Deployment
 
-```
+### Prerequisites
+*   Python 3.10 (or higher)
+*   Virtual Environment (Recommended)
 
-## 🚀 Usage Guide
-
-**1. Prepare your dataset:**
-
-* Create an Excel file (e.g., `donnees.xlsx`).
-* **Column A:** Dependent variable data ().
-* **Column B:** Independent variable data ().
-* *Note: The file must not contain headers.*
-
-**2. Configure the script:**
-
-* Open the Python script (e.g., `ModRegression-1.py`).
-* Update the file path variable to match your dataset:
-```python
-chemin_fichier = 'donnees.xlsx'
-
-```
-
-
-
-**3. Execute the script:**
-
-```bash
-python ModRegression-1.py
-
-```
-
-**4. Review the Output:**
-The terminal will display the calculated slope (`a`), intercept (`b`), and the final equation of your mathematical model. For the Gradient Descent method, graphical plots will also be generated.
+### Setup Sequence
+1.  **Initialize Environment**:
+    ```bash
+    python -m venv venv
+    source venv/bin/activate
+    ```
+2.  **Install Dependencies**:
+    ```bash
+    pip install pandas numpy matplotlib openpyxl
+    ```
+3.  **Execute Model**:
+    ```bash
+    python DescenteGradient.py
+    ```
 
 ---
 
 *Authored by Youssef Fellah.*
 
-*Developed as part of the 2nd year Engineering Cycle - Mundiapolis University.*
+*Developed for the Engineering Cycle - Mundiapolis University.*
