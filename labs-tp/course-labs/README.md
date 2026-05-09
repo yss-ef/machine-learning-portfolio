@@ -13,18 +13,16 @@ This repository centralizes various lab assignments conducted during the Machine
 
 ## Technical Stack
 
-*   **Language:** Python 3.10+
-*   **Libraries:** `scikit-learn`, `pandas`, `numpy`, `matplotlib`, `seaborn`
-*   **Environment:** Jupyter Notebooks
-
+*   **Language**: Python 3.10+
+*   **Libraries**: `scikit-learn`, `pandas`, `numpy`, `matplotlib`, `seaborn`
+*   **Environment**: Jupyter Notebooks
 ## Project Structure
 
 ```text
 ├── lab-1-mini-projects/
-│   ├── mini_projet_1_clients.csv
-│   ├── mini_projet_2_etudiants.csv
-│   └── TP_ML_4_Mini_Projets_Complet.ipynb
+│   └── mini-projects-suite.ipynb
 ├── machine-learning-modules/
+...
 │   ├── non-supervise/
 │   │   └── main.ipynb
 │   └── supervise/
@@ -37,7 +35,7 @@ This repository centralizes various lab assignments conducted during the Machine
 ### Installation
 1. Clone the repository:
    ```bash
-   git clone git@github.com:yss-ef/ml-course-labs.git
+   git clone git@github.com:yss-ef/machine-learning-portfolio.git
    ```
 2. Install dependencies:
    ```bash

@@ -22,8 +22,8 @@ The analysis follows a standard data science lifecycle:
 ## Project Structure
 
 ```text
-├── ML_Sujet1.ipynb      # Main analysis and modeling notebook
-└── churn_telecom.pptx   # Executive summary and findings
+├── telecom-churn-prediction.ipynb      # Main analysis and modeling notebook
+└── telecom-churn-report.pptx           # Executive summary and findings
 ```
 
 ## Getting Started
@@ -35,7 +35,7 @@ The analysis follows a standard data science lifecycle:
 ### Installation
 1. Clone the repository:
    ```bash
-   git clone git@github.com:yss-ef/telecom-churn-analysis.git
+   git clone git@github.com:yss-ef/machine-learning-portfolio.git
    ```
 2. Install required libraries:
    ```bash

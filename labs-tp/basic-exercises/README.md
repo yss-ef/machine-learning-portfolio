@@ -18,9 +18,9 @@ This repository serves as a laboratory for mastering the basics of numerical com
 ## Project Structure
 
 ```text
-├── ex1.py       # Exercise 1: Fundamental logic
-├── ex2.py       # Exercise 2: Data manipulation
-├── main.py      # Main execution script
+├── knn-basics.py       # Exercise 1: Fundamental logic
+├── decision-tree-basics.py       # Exercise 2: Data manipulation
+├── preprocessing-foundations.py      # Main execution script
 ├── np/          # NumPy specific exercises
 └── pd/          # Pandas specific exercises
 ```
@@ -37,7 +37,7 @@ This repository serves as a laboratory for mastering the basics of numerical com
    ```
 2. Run any script directly:
    ```bash
-   python main.py
+   python preprocessing-foundations.py
    ```
 
 ---

@@ -22,17 +22,17 @@ The project focuses on the mathematical and practical implementation of unsuperv
 
 ```text
 ├── hierarchical-clustering/
-│   ├── real_estate.csv
-│   └── tp-cah.ipynb          # Hierarchical Agglomerative Clustering implementation
+│   ├── real-estate.csv
+│   └── hierarchical-analysis.ipynb          # Hierarchical Agglomerative Clustering implementation
 ├── dbscan-clustering/
-│   ├── real_estate.csv
-│   └── tp-DBscan.ipynb       # Density-based clustering & outlier detection
+│   ├── real-estate.csv
+│   └── dbscan-analysis.ipynb       # Density-based clustering & outlier detection
 ├── k-means-clustering/
-│   ├── real_estate.csv
-│   └── tp-k-means.ipynb      # Centroid-based clustering implementation
+│   ├── real-estate.csv
+│   └── k-means-analysis.ipynb      # Centroid-based clustering implementation
 └── model-comparison/
-    ├── real_estate.csv
-    └── Projet_Comparatif_final_enonce_corrige.ipynb # Model comparison & evaluation
+    ├── real-estate.csv
+    └── clustering-comparison.ipynb # Model comparison & evaluation
 ```
 
 ## Getting Started
@@ -44,7 +44,7 @@ The project focuses on the mathematical and practical implementation of unsuperv
 ### Installation
 1. Clone the repository:
    ```bash
-   git clone git@github.com:yss-ef/unsupervised-learning-tp.git
+   git clone https://github.com/yss-ef/machine-learning-portfolio.git
    ```
 2. Install dependencies:
    ```bash

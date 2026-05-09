@@ -1,46 +1,36 @@
-# Machine Learning Labs & Mini-Projects Collection
+# Machine Learning Portfolio
 
-A consolidated repository containing various Machine Learning pedagogical exercises (Labs/TPs) and applied mini-projects (Subjects).
+A professional collection of machine learning projects and analytical labs, focusing on predictive modeling, customer intelligence, and algorithmic optimization.
+
+## Executive Summaries
+
+### E-commerce Customer Segmentation (Subject 01)
+Focused on **Customer Intelligence**, this project leverages unsupervised learning algorithms (K-Means and Hierarchical Clustering) to segment a retail customer base. By analyzing income and spending behavior, the model identifies five distinct customer segments, enabling targeted marketing strategies and improved retention.
+
+### Telecom Churn Prediction (Subject 02)
+A predictive modeling pipeline designed to analyze and forecast customer churn for a telecommunications provider. Using classification algorithms and exploratory data analysis, the project identifies key attrition drivers, allowing for proactive customer engagement to reduce turnover.
 
 ## Repository Structure
 
 ```text
-ml-labs-collection/
-├── data/                    # Centralized datasets (deduplicated)
-│   └── raw/                 # Original CSV/XLSX files
-├── mini-projects/           # Applied subjects and mini-projects
-│   ├── subject-01-ecommerce/ # E-commerce Customer Segmentation (Clustering)
-│   └── subject-02-telecom/   # Telecom Churn Analysis (Classification)
-├── labs-tp/                 # Pedagogical exercises (TPs)
-│   ├── basic-exercises/     # Fundamentals of ML with Scikit-learn
-│   ├── clustering/          # K-Means, DBSCAN, and Hierarchical Clustering
-│   ├── course-labs/         # Miscellaneous course-related mini-projects
-│   └── regression/          # Linear and Multiple Regression implementations
-└── requirements.txt         # Unified dependencies
+machine-learning-portfolio/
+├── data/                    # Centralized datasets
+│   └── raw/                 # Original CSV/XLSX source files
+├── mini-projects/           # End-to-end business subjects
+│   ├── subject-01-ecommerce/ # E-commerce Customer Segmentation
+│   └── subject-02-telecom/   # Telecom Churn Prediction
+└── labs-tp/                 # Technical labs and algorithm implementations
+    ├── basic-exercises/     # Foundations with NumPy and Pandas
+    ├── clustering/          # K-Means, DBSCAN, and CAH methodologies
+    ├── course-labs/         # Multi-model labs and case studies
+    └── regression/          # Gradient Descent and OLS from scratch
 ```
 
-## Getting Started
+## Tech Stack
+*   **Languages**: Python
+*   **Libraries**: Scikit-learn, Pandas, NumPy
+*   **Visualization**: Matplotlib, Seaborn
+*   **Tools**: Jupyter Notebooks, Google Colab
 
-1. **Install Dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-2. **Run Notebooks**:
-   Navigate to any project directory and launch Jupyter:
-   ```bash
-   jupyter notebook
-   ```
-
-## Key Projects
-
-### Mini-Projects (Subjects)
-- **Subject 01: E-commerce Segmentation**: Unsupervised learning project to identify customer segments.
-- **Subject 02: Telecom Churn**: Classification project to predict customer attrition.
-
-### Labs (TPs)
-- **Clustering**: Comparative analysis of different clustering algorithms on real estate data.
-- **Regression**: From-scratch implementation of Gradient Descent and Multiple Linear Regression.
-
-## History
-This repository was consolidated from 6 individual repositories while preserving the full commit history of each project.
+---
+*Authored by Youssef Fellah.*

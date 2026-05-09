@@ -2,7 +2,7 @@
 
 An end-to-end data science project focused on **Customer Intelligence**. This project uses unsupervised learning algorithms to segment a retail customer base into distinct groups based on annual income, spending behavior, and demographic profiles.
 
-## 🔬 Machine Learning Concepts & Theory
+## Machine Learning Concepts & Theory
 
 ### 1. Unsupervised Learning & Clustering
 Unlike supervised learning, clustering does not rely on predefined labels. It identifies hidden patterns in data by grouping similar data points together based on their distance in a multi-dimensional feature space.
@@ -19,7 +19,7 @@ This project also implements **Agglomerative Hierarchical Clustering**, which bu
 
 ---
 
-## 🛠 Data Analysis & Modeling Logic
+## Data Analysis & Modeling Logic
 
 The project follows a rigorous Data Science lifecycle:
 
@@ -32,15 +32,15 @@ The project follows a rigorous Data Science lifecycle:
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
-*   `ML_Sujet2.ipynb`: Complete Google Colab notebook containing data cleaning, visualization, and modeling.
-*   `Segmentation_Clients_Ecommerce.pptx`: Executive summary and business results presentation.
+*   `customer-segmentation.ipynb`: Complete analysis containing data cleaning, visualization, and modeling.
+*   `customer-segmentation-report.pptx`: Executive summary and business results presentation.
 *   `*.png`: Exported visualizations (Elbow Method, Dendrograms, K-Means Clusters).
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 *   Python 3.10+
@@ -50,17 +50,17 @@ The project follows a rigorous Data Science lifecycle:
 ### Installation
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/yss-ef/ecommerce-customer-segmentation.git
+   git clone https://github.com/yss-ef/machine-learning-portfolio.git
    ```
 2. **Install dependencies**:
    ```bash
    pip install pandas numpy scikit-learn matplotlib seaborn
    ```
 3. **Run the Analysis**:
-   Open `ML_Sujet2.ipynb` in your preferred notebook environment.
+   Open `customer-segmentation.ipynb` in your preferred notebook environment.
 
 ---
 
 *Authored by Youssef Fellah.*
 
-*Developed as part of the Academique Portfolio.*
+*Developed as part of the Machine Learning Portfolio.*

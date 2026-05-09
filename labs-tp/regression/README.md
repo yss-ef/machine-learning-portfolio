@@ -49,8 +49,8 @@ A direct solution using linear algebra to find the global minimum of the cost fu
 ## Project Structure
 
 ```text
-├── DescenteGradient.py # Iterative optimization engine
-├── ModRegression-1.py  # Analytical regression model
+├── gradient-descent.py # Iterative optimization engine
+├── linear-regression.py  # Analytical regression model
 ├── test.xlsx           # Sample dataset for validation
 └── README.md           # System documentation
 ```
@@ -75,7 +75,7 @@ A direct solution using linear algebra to find the global minimum of the cost fu
     ```
 3.  **Execute Model**:
     ```bash
-    python DescenteGradient.py
+    python gradient-descent.py
     ```
 
 ---
