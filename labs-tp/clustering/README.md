@@ -1,24 +1,24 @@
-# 🔬 Unsupervised Learning Methodologies: Clustering & Segmentation
+# Unsupervised Learning Methodologies: Clustering & Segmentation
 
 This repository explores various unsupervised learning algorithms applied to real estate data, focusing on clustering techniques to identify latent patterns and structures. It implements and compares multiple paradigms, including hierarchical, density-based, and centroid-based clustering.
 
 ---
 
-## 🛠 Technical Overview
+## Technical Overview
 
 The project focuses on the mathematical and practical implementation of unsupervised learning models:
 *   **K-Means Clustering:** Iterative partitioning of data into $k$ distinct clusters based on Euclidean distance.
 *   **CAH (Hierarchical Agglomerative Clustering):** Bottom-up clustering using various linkage criteria to build a dendrogram.
 *   **DBSCAN (Density-Based Spatial Clustering of Applications with Noise):** A density-based approach to identify clusters of arbitrary shapes and detect outliers.
 
-## 💻 Technical Stack
+## Technical Stack
 
 *   **Language:** Python 3.10+
 *   **Analysis:** `pandas`, `numpy`
 *   **Machine Learning:** `scikit-learn`
 *   **Visualization:** `matplotlib`, `seaborn`, `scipy.cluster.hierarchy`
 
-## 📂 Project Structure
+## Project Structure
 
 ```text
 ├── Tp-CAH/
@@ -35,7 +35,7 @@ The project focuses on the mathematical and practical implementation of unsuperv
     └── Projet_Comparatif_final_enonce_corrige.ipynb # Model comparison & evaluation
 ```
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 *   Python 3.x
