@@ -9,14 +9,14 @@ Focused on **Customer Intelligence**, this project leverages unsupervised learni
 
 ### Telecom Churn Prediction (Subject 02)
 A predictive modeling pipeline designed to analyze and forecast customer churn for a telecommunications provider. Using classification algorithms and exploratory data analysis, the project identifies key attrition drivers, allowing for proactive customer engagement to reduce turnover.
-
 ## Repository Structure
 
 ```text
 machine-learning-portfolio/
-├── data/                    # Centralized datasets
-│   └── raw/                 # Original CSV/XLSX source files
+├── data/                    # Specialized industry datasets
+│   └── raw/                 # Sources for banking, retail, healthcare, etc.
 ├── mini-projects/           # End-to-end business subjects
+...
 │   ├── subject-01-ecommerce/ # E-commerce Customer Segmentation
 │   └── subject-02-telecom/   # Telecom Churn Prediction
 └── labs-tp/                 # Technical labs and algorithm implementations
