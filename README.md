@@ -32,6 +32,5 @@ machine-learning-portfolio/
 *   **Visualization**: Matplotlib, Seaborn
 *   **Tools**: Jupyter Notebooks, Google Colab
 
----
-*Authored by Youssef Fellah.*
-*Developed for the Engineering Cycle - Mundiapolis University.*
+Authored by Youssef Fellah.  
+Developed for the Engineering Cycle - Mundiapolis University.

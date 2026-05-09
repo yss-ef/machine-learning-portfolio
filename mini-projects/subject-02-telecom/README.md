@@ -42,6 +42,5 @@ The analysis follows a standard data science lifecycle:
    pip install pandas numpy matplotlib seaborn
    ```
 
----
-*Authored by Youssef Fellah.*
-*Developed for the Engineering Cycle - Mundiapolis University.*
+Authored by Youssef Fellah.  
+Developed for the Engineering Cycle - Mundiapolis University.

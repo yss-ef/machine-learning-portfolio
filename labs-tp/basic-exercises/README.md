@@ -40,6 +40,5 @@ This repository serves as a laboratory for mastering the basics of numerical com
    python preprocessing-foundations.py
    ```
 
----
-*Authored by Youssef Fellah.*
-*Developed for the Engineering Cycle - Mundiapolis University.*
+Authored by Youssef Fellah.  
+Developed for the Engineering Cycle - Mundiapolis University.

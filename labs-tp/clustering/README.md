@@ -55,6 +55,5 @@ The project focuses on the mathematical and practical implementation of unsuperv
    jupyter notebook
    ```
 
----
-*Authored by Youssef Fellah.*
-*Developed for the Engineering Cycle - Mundiapolis University.*
+Authored by Youssef Fellah.  
+Developed for the Engineering Cycle - Mundiapolis University.

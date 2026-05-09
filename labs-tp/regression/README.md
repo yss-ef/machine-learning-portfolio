@@ -78,6 +78,5 @@ A direct solution using linear algebra to find the global minimum of the cost fu
     python gradient-descent.py
     ```
 
----
-*Authored by Youssef Fellah.*
-*Developed for the Engineering Cycle - Mundiapolis University.*
+Authored by Youssef Fellah.  
+Developed for the Engineering Cycle - Mundiapolis University.

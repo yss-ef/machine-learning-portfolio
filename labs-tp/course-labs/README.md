@@ -42,6 +42,5 @@ This repository centralizes various lab assignments conducted during the Machine
    pip install scikit-learn pandas numpy matplotlib seaborn
    ```
 
----
-*Authored by Youssef Fellah.*
-*Developed for the Engineering Cycle - Mundiapolis University.*
+Authored by Youssef Fellah.  
+Developed for the Engineering Cycle - Mundiapolis University.
