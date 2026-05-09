@@ -71,7 +71,7 @@ def calculer_erreur(chemin_fichier_excel, a, b):
 # --- Utilisation de l'algorithme ---
 # Créez un fichier excel nommé 'donnees_projet.xlsx' avec vos données
 # ou remplacez le nom du fichier.
-chemin_fichier = 'test.xlsx'
+chemin_fichier = '../../data/raw/test.xlsx'
 coefficients = calculer_regression_matricielle(chemin_fichier)
 
 if coefficients:

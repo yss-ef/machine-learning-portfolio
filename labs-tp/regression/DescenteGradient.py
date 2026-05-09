@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 # Étape 1 : Lecture des données
 try:
     # Charger le fichier Excel
-    df = pd.read_excel('test.xlsx', header=None)
+    df = pd.read_excel('../../data/raw/test.xlsx', header=None)
     # Assigner les colonnes comme tu l'as demandé : Y est la première, X la seconde.
     Y = df[0]
     X = df[1]
