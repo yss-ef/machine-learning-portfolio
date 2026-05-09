@@ -21,16 +21,16 @@ The project focuses on the mathematical and practical implementation of unsuperv
 ## Project Structure
 
 ```text
-├── Tp-CAH/
+├── hierarchical-clustering/
 │   ├── real_estate.csv
 │   └── tp-cah.ipynb          # Hierarchical Agglomerative Clustering implementation
-├── Tp-DBscan/
+├── dbscan-clustering/
 │   ├── real_estate.csv
 │   └── tp-DBscan.ipynb       # Density-based clustering & outlier detection
-├── Tp-K-means/
+├── k-means-clustering/
 │   ├── real_estate.csv
 │   └── tp-k-means.ipynb      # Centroid-based clustering implementation
-└── Tp-comparer/
+└── model-comparison/
     ├── real_estate.csv
     └── Projet_Comparatif_final_enonce_corrige.ipynb # Model comparison & evaluation
 ```
