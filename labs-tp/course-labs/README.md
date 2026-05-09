@@ -20,11 +20,11 @@ This repository centralizes various lab assignments conducted during the Machine
 ## Project Structure
 
 ```text
-├── Tp-1/
+├── lab-1-mini-projects/
 │   ├── mini_projet_1_clients.csv
 │   ├── mini_projet_2_etudiants.csv
 │   └── TP_ML_4_Mini_Projets_Complet.ipynb
-├── tp-ml/
+├── machine-learning-modules/
 │   ├── non-supervise/
 │   │   └── main.ipynb
 │   └── supervise/
