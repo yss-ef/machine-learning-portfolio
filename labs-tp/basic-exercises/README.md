@@ -1,21 +1,21 @@
-# 🔬 Fundamentals of Machine Learning: Practical Exercises
+# Fundamentals of Machine Learning: Practical Exercises
 
 A collection of foundational exercises and implementation scripts focusing on the core building blocks of machine learning, including data manipulation and basic algorithmic logic.
 
 ---
 
-## 🛠 Core Implementations
+## Core Implementations
 
 This repository serves as a laboratory for mastering the basics of numerical computing and structured programming in a machine learning context:
 *   **Data Structures:** Custom implementations and exercises using `numpy` and `pandas` paradigms.
 *   **Scripting:** Procedural Python scripts for data transformation and analysis.
 
-## 💻 Technical Stack
+## Technical Stack
 
 *   **Language:** Python 3.10+
 *   **Core Libraries:** `numpy`, `pandas`
 
-## 📂 Project Structure
+## Project Structure
 
 ```text
 ├── ex1.py       # Exercise 1: Fundamental logic
@@ -25,7 +25,7 @@ This repository serves as a laboratory for mastering the basics of numerical com
 └── pd/          # Pandas specific exercises
 ```
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 *   Python 3.x
