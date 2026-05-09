@@ -34,3 +34,4 @@ machine-learning-portfolio/
 
 ---
 *Authored by Youssef Fellah.*
+*Developed for the Engineering Cycle - Mundiapolis University.*

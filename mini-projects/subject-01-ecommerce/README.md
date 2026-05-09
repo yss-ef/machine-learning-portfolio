@@ -60,7 +60,5 @@ The project follows a rigorous Data Science lifecycle:
    Open `customer-segmentation.ipynb` in your preferred notebook environment.
 
 ---
-
 *Authored by Youssef Fellah.*
-
-*Developed as part of the Machine Learning Portfolio.*
+*Developed for the Engineering Cycle - Mundiapolis University.*

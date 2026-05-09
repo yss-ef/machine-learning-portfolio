@@ -79,7 +79,5 @@ A direct solution using linear algebra to find the global minimum of the cost fu
     ```
 
 ---
-
 *Authored by Youssef Fellah.*
-
 *Developed for the Engineering Cycle - Mundiapolis University.*
