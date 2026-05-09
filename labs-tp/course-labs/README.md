@@ -1,23 +1,23 @@
-# 🛠 Machine Learning Laboratory: Course Labs & Case Studies
+# Machine Learning Laboratory: Course Labs & Case Studies
 
 A comprehensive collection of machine learning laboratories and practical applications, covering both supervised and unsupervised learning paradigms across various academic modules.
 
 ---
 
-## 🔬 Academic Scope
+## Academic Scope
 
 This repository centralizes various lab assignments conducted during the Machine Learning course, featuring:
 *   **Supervised Learning:** Implementation of classification and regression models.
 *   **Unsupervised Learning:** Exploration of clustering and dimensionality reduction.
 *   **Mini-Projects:** Real-world case studies involving student performance and client data analysis.
 
-## 💻 Technical Stack
+## Technical Stack
 
 *   **Language:** Python 3.10+
 *   **Libraries:** `scikit-learn`, `pandas`, `numpy`, `matplotlib`, `seaborn`
 *   **Environment:** Jupyter Notebooks
 
-## 📂 Project Structure
+## Project Structure
 
 ```text
 ├── Tp-1/
@@ -32,7 +32,7 @@ This repository centralizes various lab assignments conducted during the Machine
 └── README.md
 ```
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Installation
 1. Clone the repository:
