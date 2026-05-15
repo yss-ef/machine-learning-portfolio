@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student ML Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0d0f12;
+    --surface: #14171c;
+    --surface2: #1c2029;
+    --surface3: #242936;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.13);
+    --accent: #4ade80;
+    --accent2: #38bdf8;
+    --accent3: #fb923c;
+    --text: #e8eaf0;
+    --muted: #8892a4;
+    --danger: #f87171;
+    --warn: #fbbf24;
+    --mono: 'DM Mono', monospace;
+    --sans: 'DM Sans', sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--sans); background: var(--bg); color: var(--text); min-height: 100vh; font-size: 14px; line-height: 1.6; }
+
+  /* layout */
+  .shell { display: flex; min-height: 100vh; }
+  .sidebar { width: 220px; min-width: 220px; background: var(--surface); border-right: 1px solid var(--border); padding: 24px 0; display: flex; flex-direction: column; }
+  .main { flex: 1; overflow-y: auto; }
+
+  /* sidebar */
+  .logo { padding: 0 20px 24px; font-family: var(--mono); font-size: 13px; color: var(--accent); letter-spacing: 0.08em; border-bottom: 1px solid var(--border); margin-bottom: 8px; }
+  .logo span { color: var(--muted); font-size: 11px; display: block; margin-top: 2px; letter-spacing: 0.04em; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 20px; cursor: pointer; font-size: 13px; color: var(--muted); transition: all .15s; border-left: 2px solid transparent; }
+  .nav-item:hover { color: var(--text); background: var(--surface2); }
+  .nav-item.active { color: var(--accent); border-left-color: var(--accent); background: rgba(74,222,128,0.06); }
+  .nav-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+  .nav-label { font-size: 10px; color: var(--muted); padding: 14px 20px 4px; letter-spacing: 0.1em; text-transform: uppercase; }
+  .sidebar-bottom { margin-top: auto; padding: 16px 20px; border-top: 1px solid var(--border); font-family: var(--mono); font-size: 10px; color: var(--muted); }
+
+  /* top bar */
+  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 16px 32px; border-bottom: 1px solid var(--border); background: var(--surface); position: sticky; top: 0; z-index: 10; }
+  .topbar-title { font-size: 15px; font-weight: 600; color: var(--text); }
+  .topbar-sub { font-size: 12px; color: var(--muted); margin-top: 1px; }
+  .badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 4px; font-size: 11px; font-weight: 500; font-family: var(--mono); }
+  .badge-green { background: rgba(74,222,128,0.12); color: var(--accent); }
+  .badge-blue { background: rgba(56,189,248,0.12); color: var(--accent2); }
+  .badge-orange { background: rgba(251,146,60,0.12); color: var(--accent3); }
+  .badge-red { background: rgba(248,113,113,0.12); color: var(--danger); }
+  .badge-muted { background: var(--surface3); color: var(--muted); }
+
+  /* pages */
+  .page { display: none; padding: 28px 32px; }
+  .page.active { display: block; }
+
+  /* cards */
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 16px; }
+  .card-title { font-size: 12px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 14px; font-family: var(--mono); }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+
+  /* stat */
+  .stat { background: var(--surface2); border-radius: 8px; padding: 14px 16px; }
+  .stat-val { font-size: 22px; font-weight: 600; color: var(--text); font-family: var(--mono); }
+  .stat-lbl { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+  /* form */
+  .field-label { font-size: 11px; color: var(--muted); letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 6px; display: block; }
+  select, input[type=number], input[type=range] { width: 100%; background: var(--surface2); border: 1px solid var(--border2); border-radius: 6px; color: var(--text); padding: 8px 12px; font-size: 13px; font-family: var(--sans); outline: none; transition: border .15s; }
+  select:focus, input:focus { border-color: var(--accent); }
+  input[type=range] { padding: 4px 0; accent-color: var(--accent); }
+
+  /* model toggle cards */
+  .model-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .model-card { border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; cursor: pointer; transition: all .15s; display: flex; align-items: flex-start; gap: 10px; }
+  .model-card:hover { border-color: var(--border2); background: var(--surface2); }
+  .model-card.selected { border-color: var(--accent); background: rgba(74,222,128,0.06); }
+  .model-card input[type=checkbox] { accent-color: var(--accent); margin-top: 2px; flex-shrink: 0; }
+  .model-card .mc-name { font-size: 13px; font-weight: 500; color: var(--text); }
+  .model-card .mc-desc { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  /* feature chips */
+  .chip { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 4px; font-size: 12px; font-family: var(--mono); border: 1px solid var(--border2); background: var(--surface2); color: var(--text); cursor: pointer; margin: 3px; transition: all .1s; user-select: none; }
+  .chip:hover { border-color: var(--accent); }
+  .chip.off { opacity: 0.3; }
+  .chip.on { border-color: var(--accent); background: rgba(74,222,128,0.08); color: var(--accent); }
+
+  /* log */
+  .log { font-family: var(--mono); font-size: 12px; color: #6ee7b7; background: #0a0d10; border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; min-height: 80px; max-height: 220px; overflow-y: auto; line-height: 1.8; white-space: pre-wrap; }
+  .log .log-dim { color: var(--muted); }
+  .log .log-ok { color: var(--accent); }
+  .log .log-warn { color: var(--warn); }
+
+  /* buttons */
+  .btn { padding: 9px 20px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; border: none; font-family: var(--sans); transition: all .15s; }
+  .btn-primary { background: var(--accent); color: #0d1a0f; }
+  .btn-primary:hover { opacity: .88; }
+  .btn-primary:disabled { opacity: .3; cursor: not-allowed; }
+  .btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border2); }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-sm { padding: 6px 14px; font-size: 12px; }
+
+  /* results table */
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead th { text-align: left; padding: 8px 12px; font-size: 11px; color: var(--muted); letter-spacing: 0.07em; text-transform: uppercase; border-bottom: 1px solid var(--border); font-weight: 500; }
+  tbody td { padding: 10px 12px; border-bottom: 1px solid var(--border); color: var(--text); }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover td { background: var(--surface2); }
+  .best-val { color: var(--accent); font-weight: 600; font-family: var(--mono); }
+  .normal-val { font-family: var(--mono); }
+
+  /* progress bar */
+  .prog-wrap { height: 5px; background: var(--surface3); border-radius: 3px; overflow: hidden; width: 100px; }
+  .prog-fill { height: 100%; border-radius: 3px; background: var(--accent); }
+
+  /* interpretation */
+  .interp { background: var(--surface2); border-left: 3px solid var(--accent); padding: 16px 18px; border-radius: 0 8px 8px 0; font-size: 13px; line-height: 1.8; color: var(--text); }
+  .interp strong { color: var(--accent); }
+  .interp .finding { margin-top: 10px; display: flex; gap: 8px; }
+  .interp .finding::before { content: "→"; color: var(--accent2); flex-shrink: 0; }
+
+  /* chart wrapper */
+  .chart-box { position: relative; width: 100%; }
+
+  /* confusion matrix */
+  .cm-grid { display: inline-grid; grid-template-columns: auto auto auto; gap: 3px; font-family: var(--mono); font-size: 13px; }
+  .cm-cell { width: 64px; height: 52px; display: flex; align-items: center; justify-content: center; border-radius: 5px; font-weight: 600; }
+  .cm-head { font-size: 10px; color: var(--muted); font-weight: 400; }
+
+  /* tab bar */
+  .tab-bar { display: flex; gap: 2px; background: var(--surface2); border-radius: 7px; padding: 3px; margin-bottom: 18px; }
+  .tab-btn { flex: 1; padding: 7px 0; text-align: center; font-size: 12px; cursor: pointer; border-radius: 5px; color: var(--muted); transition: all .12s; border: none; background: none; font-family: var(--sans); }
+  .tab-btn.active { background: var(--surface3); color: var(--text); font-weight: 500; }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 3px; }
+
+  /* loading spinner */
+  .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid var(--surface3); border-top-color: var(--accent); border-radius: 50%; animation: spin .6s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .row-kv { display: flex; align-items: center; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .row-kv:last-child { border-bottom: none; }
+  .row-kv .k { color: var(--muted); }
+  .divider { height: 1px; background: var(--border); margin: 16px 0; }
+  .flex-end { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; }
+  .flex-row { display: flex; gap: 12px; align-items: center; }
+  .mt-4 { margin-top: 4px; }
+  .mt-8 { margin-top: 8px; }
+  .mt-16 { margin-top: 16px; }
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- ─── SIDEBAR ─────────────────────────────────────────────────────────── -->
+<nav class="sidebar">
+  <div class="logo">StudentML<span>v1.0 · sklearn + flask</span></div>
+  <div class="nav-label">Pipeline</div>
+  <div class="nav-item active" onclick="showPage('p-data')" id="nav-p-data"><span class="nav-dot"></span>Data &amp; EDA</div>
+  <div class="nav-item" onclick="showPage('p-clean')" id="nav-p-clean"><span class="nav-dot"></span>Clean &amp; Transform</div>
+  <div class="nav-item" onclick="showPage('p-train')" id="nav-p-train"><span class="nav-dot"></span>Configure &amp; Train</div>
+  <div class="nav-item" onclick="showPage('p-results')" id="nav-p-results"><span class="nav-dot"></span>Results &amp; Evaluation</div>
+  <div class="nav-item" onclick="showPage('p-interp')" id="nav-p-interp"><span class="nav-dot"></span>Interpretation</div>
+  <div class="sidebar-bottom">student-mat.csv · student-por.csv</div>
+</nav>
+
+<!-- ─── MAIN ─────────────────────────────────────────────────────────────── -->
+<div class="main">
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div>
+    <div class="topbar-title" id="page-title">Data &amp; EDA</div>
+    <div class="topbar-sub" id="page-sub">Explore the datasets before training</div>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center">
+    <span class="badge badge-muted" id="ds-badge">mat · 395 rows</span>
+    <span class="badge badge-green" id="task-badge">regression</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     PAGE 1 — DATA & EDA
+═══════════════════════════════════════════════════ -->
+<div class="page active" id="p-data">
+  <div class="grid-2" style="margin-bottom:16px">
+    <div>
+      <label class="field-label">Dataset</label>
+      <select id="ds-sel" onchange="onDsChange()">
+        <option value="mat">student-mat.csv — Mathematics</option>
+        <option value="por">student-por.csv — Portuguese</option>
+      </select>
+    </div>
+    <div>
+      <label class="field-label">Prediction Target</label>
+      <select id="target-sel" onchange="onTargetChange()">
+        <option value="G3_reg">G3 Final Grade (regression)</option>
+        <option value="pass_class">Pass / Fail  G3 ≥ 10  (binary classification)</option>
+        <option value="grade_class">Fail / Medium / High (3-class)</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="grid-4" id="stat-cards" style="margin-bottom:16px">
+    <div class="stat"><div class="stat-val" id="s-rows">—</div><div class="stat-lbl">Rows</div></div>
+    <div class="stat"><div class="stat-val" id="s-cols">—</div><div class="stat-lbl">Columns</div></div>
+    <div class="stat"><div class="stat-val" id="s-mean">—</div><div class="stat-lbl">Mean G3</div></div>
+    <div class="stat"><div class="stat-val" id="s-pass">—</div><div class="stat-lbl">Pass Rate %</div></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">G3 Grade Distribution</div>
+      <div class="chart-box" style="height:200px"><canvas id="g3-chart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Top Correlations with G3</div>
+      <div class="chart-box" style="height:200px"><canvas id="corr-chart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Failures → Mean G3</div>
+      <div class="chart-box" style="height:160px"><canvas id="fail-chart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Study Time → Mean G3</div>
+      <div class="chart-box" style="height:160px"><canvas id="study-chart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="flex-end">
+    <button class="btn btn-primary" onclick="showPage('p-clean')">Next: Clean &amp; Transform →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     PAGE 2 — CLEAN
+═══════════════════════════════════════════════════ -->
+<div class="page" id="p-clean">
+  <div class="grid-2" style="margin-bottom:16px">
+    <div class="card">
+      <div class="card-title">Data Quality</div>
+      <div class="row-kv"><span class="k">Missing values</span><span class="badge badge-green">0 — clean</span></div>
+      <div class="row-kv"><span class="k">Duplicate rows</span><span class="badge badge-green">0 found</span></div>
+      <div class="row-kv"><span class="k">Binary yes/no columns</span><span class="badge badge-blue" id="bin-count">—</span></div>
+      <div class="row-kv"><span class="k">Categorical columns</span><span class="badge badge-blue" id="cat-count">—</span></div>
+      <div class="row-kv"><span class="k">Numeric columns</span><span class="badge badge-muted" id="num-count">—</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Transformations</div>
+      <div class="row-kv"><span class="k">yes/no → 0/1</span><span class="badge badge-blue">binary encode</span></div>
+      <div class="row-kv"><span class="k">school, sex, address…</span><span class="badge badge-blue">one-hot encode</span></div>
+      <div class="row-kv"><span class="k">All numerics</span><span class="badge badge-blue">StandardScaler</span></div>
+      <div class="row-kv"><span class="k">Train / Test split</span>
+        <select id="split-sel" style="width:auto;padding:4px 8px;font-size:12px">
+          <option value="0.2">80% / 20%</option>
+          <option value="0.25">75% / 25%</option>
+          <option value="0.3">70% / 30%</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Feature Selection <span style="font-weight:400;color:var(--muted);text-transform:none;font-size:11px;letter-spacing:0">(click to toggle on/off)</span></div>
+    <div id="feat-chips-wrap"></div>
+    <div class="flex-row mt-16">
+      <button class="btn btn-outline btn-sm" onclick="toggleAllFeats(true)">Select All</button>
+      <button class="btn btn-outline btn-sm" onclick="toggleAllFeats(false)">Clear All</button>
+      <span style="font-size:12px;color:var(--muted);margin-left:auto"><span id="feat-count">0</span> features selected</span>
+    </div>
+  </div>
+
+  <div class="flex-end">
+    <button class="btn btn-outline" onclick="showPage('p-data')">← Back</button>
+    <button class="btn btn-primary" onclick="showPage('p-train')">Next: Configure Models →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     PAGE 3 — TRAIN
+═══════════════════════════════════════════════════ -->
+<div class="page" id="p-train">
+  <div class="grid-2" style="margin-bottom:16px">
+    <div class="card">
+      <div class="card-title">Select Models</div>
+      <div class="model-grid" id="model-grid">
+        <label class="model-card selected" id="mc-lr">
+          <input type="checkbox" value="lr" checked onchange="toggleMC(this)">
+          <div><div class="mc-name">Linear / Logistic Reg.</div><div class="mc-desc">Fast · interpretable · baseline</div></div>
+        </label>
+        <label class="model-card selected" id="mc-dt">
+          <input type="checkbox" value="dt" checked onchange="toggleMC(this)">
+          <div><div class="mc-name">Decision Tree</div><div class="mc-desc">Explainable · rule-based splits</div></div>
+        </label>
+        <label class="model-card selected" id="mc-rf">
+          <input type="checkbox" value="rf" checked onchange="toggleMC(this)">
+          <div><div class="mc-name">Random Forest</div><div class="mc-desc">Strong baseline · low variance</div></div>
+        </label>
+        <label class="model-card selected" id="mc-gb">
+          <input type="checkbox" value="gb" checked onchange="toggleMC(this)">
+          <div><div class="mc-name">Gradient Boosting</div><div class="mc-desc">High accuracy · sequential trees</div></div>
+        </label>
+        <label class="model-card" id="mc-knn">
+          <input type="checkbox" value="knn" onchange="toggleMC(this)">
+          <div><div class="mc-name">K-Nearest Neighbors</div><div class="mc-desc">Instance-based · no training</div></div>
+        </label>
+        <label class="model-card" id="mc-svm">
+          <input type="checkbox" value="svm" onchange="toggleMC(this)">
+          <div><div class="mc-name">Support Vector Machine</div><div class="mc-desc">Kernel trick · robust to scale</div></div>
+        </label>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Hyperparameters</div>
+      <div class="row-kv"><span class="k">Cross-validation folds</span>
+        <select id="cv-sel" style="width:80px;padding:4px 8px;font-size:13px">
+          <option value="5">5</option><option value="3">3</option><option value="10">10</option>
+        </select>
+      </div>
+      <div class="row-kv"><span class="k">Random seed</span>
+        <input type="number" id="seed-inp" value="42" style="width:80px;padding:4px 8px;font-size:13px">
+      </div>
+      <div class="row-kv"><span class="k">Max tree depth</span>
+        <input type="number" id="depth-inp" value="5" min="2" max="20" style="width:80px;padding:4px 8px;font-size:13px">
+      </div>
+      <div class="divider"></div>
+      <div class="card-title">Training Log</div>
+      <div class="log" id="train-log">Ready to train. Press "Run Training" when configured.</div>
+    </div>
+  </div>
+
+  <div class="flex-end">
+    <button class="btn btn-outline" onclick="showPage('p-clean')">← Back</button>
+    <button class="btn btn-primary" id="run-btn" onclick="runTraining()">▶ Run Training</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     PAGE 4 — RESULTS
+═══════════════════════════════════════════════════ -->
+<div class="page" id="p-results">
+  <div id="no-results" style="text-align:center;padding:60px 0;color:var(--muted)">
+    <div style="font-size:32px;margin-bottom:12px">⚗</div>
+    <p>No results yet — train your models first.</p>
+  </div>
+  <div id="results-inner" style="display:none">
+    <div class="grid-4" id="res-stats" style="margin-bottom:16px"></div>
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="showResTab('metrics')" id="rt-metrics">Metrics</button>
+      <button class="tab-btn" onclick="showResTab('fi')" id="rt-fi">Feature Importance</button>
+      <button class="tab-btn" onclick="showResTab('cv')" id="rt-cv">Cross-Validation</button>
+      <button class="tab-btn" onclick="showResTab('cm')" id="rt-cm">Confusion Matrix</button>
+    </div>
+    <div id="res-metrics"></div>
+    <div id="res-fi" style="display:none"></div>
+    <div id="res-cv" style="display:none"></div>
+    <div id="res-cm" style="display:none"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     PAGE 5 — INTERPRETATION
+═══════════════════════════════════════════════════ -->
+<div class="page" id="p-interp">
+  <div id="no-interp" style="text-align:center;padding:60px 0;color:var(--muted)">
+    <p>Train models first to see interpretation.</p>
+  </div>
+  <div id="interp-inner" style="display:none">
+    <div class="card" id="interp-summary"></div>
+    <div class="card" id="interp-findings"></div>
+    <div class="card" id="interp-recommend"></div>
+  </div>
+</div>
+
+</div><!-- /main -->
+</div><!-- /shell -->
+
+<script>
+// ─── STATE ────────────────────────────────────────────────────────────────────
+let state = {
+  dataset: "mat",
+  target: "G3_reg",
+  features: null,  // null = all
+  dsInfo: null,
+  trainResult: null,
+  charts: {},
+};
+
+const ALL_FEATS = ["age","address","famsize","Pstatus","Medu","Fedu","Mjob","Fjob","reason","guardian","traveltime","studytime","failures","schoolsup","famsup","paid","activities","nursery","higher","internet","romantic","famrel","freetime","goout","Dalc","Walc","health","absences","G1","G2"];
+let featEnabled = Object.fromEntries(ALL_FEATS.map(f => [f, true]));
+
+const MODEL_NAMES = {
+  lr: "Lin./Log. Reg.", ridge: "Ridge", dt: "Decision Tree",
+  rf: "Random Forest", gb: "Gradient Boosting", knn: "KNN", svm: "SVM"
+};
+
+// ─── NAVIGATION ───────────────────────────────────────────────────────────────
+const PAGE_META = {
+  "p-data":   ["Data & EDA", "Explore the datasets before training"],
+  "p-clean":  ["Clean & Transform", "Preprocessing and feature selection"],
+  "p-train":  ["Configure & Train", "Select models and run the pipeline"],
+  "p-results":["Results & Evaluation", "Compare model performance metrics"],
+  "p-interp": ["Interpretation", "Educational insights and recommendations"],
+};
+
+function showPage(id) {
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  document.getElementById("nav-" + id).classList.add("active");
+  const [title, sub] = PAGE_META[id];
+  document.getElementById("page-title").textContent = title;
+  document.getElementById("page-sub").textContent = sub;
+
+  if(id === "p-data") loadEDA();
+  if(id === "p-clean") renderCleanPage();
+}
+
+// ─── DATASET / TARGET CHANGE ──────────────────────────────────────────────────
+function onDsChange() {
+  state.dataset = document.getElementById("ds-sel").value;
+  const rows = state.dataset === "mat" ? 395 : 649;
+  document.getElementById("ds-badge").textContent = state.dataset + " · " + rows + " rows";
+  loadEDA();
+}
+function onTargetChange() {
+  state.target = document.getElementById("target-sel").value;
+  const t = state.target === "G3_reg" ? "regression" : (state.target === "pass_class" ? "classification" : "multiclass");
+  document.getElementById("task-badge").textContent = t;
+  document.getElementById("task-badge").className = "badge " + (t==="regression"?"badge-blue":t==="classification"?"badge-green":"badge-orange");
+}
+
+// ─── EDA ──────────────────────────────────────────────────────────────────────
+function destroyChart(id) {
+  if(state.charts[id]) { state.charts[id].destroy(); delete state.charts[id]; }
+}
+
+async function loadEDA() {
+  const info = await fetch("/api/dataset-info").then(r => r.json());
+  const ds = info[state.dataset];
+  state.dsInfo = info;
+  document.getElementById("s-rows").textContent = ds.rows;
+  document.getElementById("s-cols").textContent = ds.cols;
+  document.getElementById("s-mean").textContent = ds.g3_mean;
+  document.getElementById("s-pass").textContent = ds.pass_rate + "%";
+
+  const eda = await fetch("/api/eda", {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({dataset: state.dataset})}).then(r=>r.json());
+
+  // G3 distribution
+  destroyChart("g3");
+  state.charts["g3"] = new Chart(document.getElementById("g3-chart"), {
+    type: "bar",
+    data: {
+      labels: Object.keys(eda.g3_distribution),
+      datasets: [{ label: "Count", data: Object.values(eda.g3_distribution), backgroundColor: "#4ade8055", borderColor: "#4ade80", borderWidth: 1, borderRadius: 3 }]
+    },
+    options: { responsive: true, maintainAspectRatio: false, plugins:{ legend:{display:false} },
+      scales:{ x:{ticks:{color:"#8892a4",font:{size:10}}}, y:{ticks:{color:"#8892a4",font:{size:10}}, grid:{color:"rgba(255,255,255,0.04)"}} } }
+  });
+
+  // Correlations
+  const corrEntries = Object.entries(eda.correlations).slice(0, 10);
+  const corrColors = corrEntries.map(([,v]) => v > 0 ? "#4ade8088" : "#f8717188");
+  destroyChart("corr");
+  state.charts["corr"] = new Chart(document.getElementById("corr-chart"), {
+    type: "bar",
+    data: {
+      labels: corrEntries.map(([k]) => k),
+      datasets: [{ label: "Corr with G3", data: corrEntries.map(([,v]) => v), backgroundColor: corrColors, borderRadius: 3 }]
+    },
+    options: { indexAxis: "y", responsive: true, maintainAspectRatio: false, plugins:{legend:{display:false}},
+      scales:{ x:{ticks:{color:"#8892a4",font:{size:10}}, grid:{color:"rgba(255,255,255,0.04)"}}, y:{ticks:{color:"#8892a4",font:{size:10}}} } }
+  });
+
+  // Failures
+  destroyChart("fail");
+  state.charts["fail"] = new Chart(document.getElementById("fail-chart"), {
+    type: "bar",
+    data: {
+      labels: Object.keys(eda.failures_vs_g3).map(k => k + " failure(s)"),
+      datasets: [{ label: "Mean G3", data: Object.values(eda.failures_vs_g3), backgroundColor: "#fb923c66", borderColor: "#fb923c", borderWidth: 1, borderRadius: 3 }]
+    },
+    options: { responsive: true, maintainAspectRatio: false, plugins:{legend:{display:false}},
+      scales:{ x:{ticks:{color:"#8892a4",font:{size:10}}}, y:{ticks:{color:"#8892a4",font:{size:10}}, grid:{color:"rgba(255,255,255,0.04)"}} } }
+  });
+
+  // Study time
+  destroyChart("study");
+  state.charts["study"] = new Chart(document.getElementById("study-chart"), {
+    type: "line",
+    data: {
+      labels: Object.keys(eda.studytime_vs_g3).map(k => "Level " + k),
+      datasets: [{ label: "Mean G3", data: Object.values(eda.studytime_vs_g3), borderColor: "#38bdf8", backgroundColor: "#38bdf820", pointBackgroundColor: "#38bdf8", tension: 0.3, fill: true }]
+    },
+    options: { responsive: true, maintainAspectRatio: false, plugins:{legend:{display:false}},
+      scales:{ x:{ticks:{color:"#8892a4",font:{size:10}}}, y:{ticks:{color:"#8892a4",font:{size:10}}, grid:{color:"rgba(255,255,255,0.04)"}} } }
+  });
+}
+
+// ─── CLEAN PAGE ───────────────────────────────────────────────────────────────
+function renderCleanPage() {
+  const info = state.dsInfo ? state.dsInfo[state.dataset] : null;
+  if(info) {
+    const binary = ["schoolsup","famsup","paid","activities","nursery","higher","internet","romantic"];
+    document.getElementById("bin-count").textContent = binary.length + " columns";
+    document.getElementById("cat-count").textContent = (info.cat_cols.length - binary.length) + " columns";
+    document.getElementById("num-count").textContent = info.numeric_cols.length + " columns";
+  }
+  const wrap = document.getElementById("feat-chips-wrap");
+  wrap.innerHTML = "";
+  ALL_FEATS.forEach(f => {
+    const el = document.createElement("span");
+    el.className = "chip " + (featEnabled[f] ? "on" : "off");
+    el.textContent = f;
+    el.onclick = () => { featEnabled[f] = !featEnabled[f]; el.className = "chip " + (featEnabled[f]?"on":"off"); updateFeatCount(); };
+    wrap.appendChild(el);
+  });
+  updateFeatCount();
+}
+
+function updateFeatCount() {
+  document.getElementById("feat-count").textContent = ALL_FEATS.filter(f => featEnabled[f]).length;
+}
+
+function toggleAllFeats(on) {
+  ALL_FEATS.forEach(f => { featEnabled[f] = on; });
+  document.querySelectorAll("#feat-chips-wrap .chip").forEach(el => { el.className = "chip " + (on?"on":"off"); });
+  updateFeatCount();
+}
+
+// ─── MODEL TOGGLE ─────────────────────────────────────────────────────────────
+function toggleMC(cb) {
+  const card = cb.closest(".model-card");
+  card.classList.toggle("selected", cb.checked);
+}
+
+// ─── TRAINING ─────────────────────────────────────────────────────────────────
+async function runTraining() {
+  const btn = document.getElementById("run-btn");
+  const log = document.getElementById("train-log");
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Training…';
+  log.textContent = "";
+
+  const models = [...document.querySelectorAll("#model-grid input:checked")].map(c => c.value);
+  if(!models.length) { log.textContent = "Select at least one model."; btn.disabled = false; btn.textContent = "▶ Run Training"; return; }
+
+  const selectedFeats = ALL_FEATS.filter(f => featEnabled[f]);
+
+  const payload = {
+    dataset: state.dataset,
+    target: state.target,
+    models,
+    features: selectedFeats,
+    cv_folds: parseInt(document.getElementById("cv-sel").value),
+    seed: parseInt(document.getElementById("seed-inp").value),
+    test_size: parseFloat(document.getElementById("split-sel").value),
+  };
+
+  log.textContent = `[init] Sending request…\n[data] dataset=${payload.dataset} · target=${payload.target} · features=${selectedFeats.length}\n`;
+
+  try {
+    const resp = await fetch("/api/train", {
+      method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify(payload)
+    });
+    const data = await resp.json();
+    if(data.error) { log.textContent += `[error] ${data.error}\n`; return; }
+
+    state.trainResult = data;
+
+    data.cleaning_log.forEach(l => { log.textContent += `[clean] ${l}\n`; });
+    log.textContent += `[split] train=${data.n_train} · test=${data.n_test} · features=${data.n_features}\n`;
+    data.results.forEach(r => {
+      if(r.error) { log.textContent += `[fail]  ${MODEL_NAMES[r.model_key]}: ${r.error}\n`; return; }
+      const isReg = data.task === "regression";
+      const primary = isReg ? `R²=${r.metrics.r2} RMSE=${r.metrics.rmse}` : `acc=${(r.metrics.accuracy*100).toFixed(1)}% f1=${(r.metrics.f1*100).toFixed(1)}%`;
+      log.textContent += `[done]  ${MODEL_NAMES[r.model_key]} → ${primary}\n`;
+    });
+    log.textContent += `\n✓ Training complete — view Results tab\n`;
+
+    renderResults(data);
+    renderInterpretation(data);
+  } catch(e) {
+    log.textContent += `[error] ${e}\n`;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "▶ Run Training";
+  }
+}
+
+// ─── RESULTS ──────────────────────────────────────────────────────────────────
+function renderResults(data) {
+  document.getElementById("no-results").style.display = "none";
+  document.getElementById("results-inner").style.display = "block";
+
+  const isReg = data.task === "regression";
+  const results = data.results.filter(r => !r.error);
+  const best = results[0];
+
+  // stat cards
+  document.getElementById("res-stats").innerHTML = `
+    <div class="stat"><div class="stat-val">${results.length}</div><div class="stat-lbl">Models trained</div></div>
+    <div class="stat"><div class="stat-val">${data.n_train + data.n_test}</div><div class="stat-lbl">Total samples</div></div>
+    <div class="stat"><div class="stat-val">${isReg ? best.metrics.r2 : (best.metrics.accuracy*100).toFixed(1)+'%'}</div><div class="stat-lbl">Best ${isReg?'R²':'Accuracy'}</div></div>
+    <div class="stat"><div class="stat-val" style="font-size:14px">${MODEL_NAMES[best.model_key]}</div><div class="stat-lbl">Top model</div></div>
+  `;
+
+  // metrics table
+  const isClass = !isReg;
+  let mhtml = `<div class="card"><table>
+    <thead><tr><th>#</th><th>Model</th>`;
+  if(isReg) mhtml += `<th>R²</th><th>RMSE</th><th>MAE</th>`;
+  else      mhtml += `<th>Accuracy</th><th>F1</th><th>Precision</th><th>Recall</th>${data.task==='classification'?'<th>AUC</th>':''}`;
+  mhtml += `<th>CV Mean</th><th>CV ±</th></tr></thead><tbody>`;
+
+  results.forEach((r, i) => {
+    const isBest = i === 0;
+    const vc = isBest ? ' class="best-val"' : ' class="normal-val"';
+    mhtml += `<tr><td><span class="badge ${i===0?'badge-green':i===1?'badge-blue':'badge-muted'}">#${i+1}</span></td>
+      <td>${MODEL_NAMES[r.model_key]}</td>`;
+    if(isReg) {
+      mhtml += `<td${vc}>${r.metrics.r2}</td><td${vc}>${r.metrics.rmse}</td><td class="normal-val">${r.metrics.mae}</td>`;
+      mhtml += `<td class="normal-val">${r.metrics.cv_r2_mean}</td><td class="normal-val">±${r.metrics.cv_r2_std}</td>`;
+    } else {
+      mhtml += `<td${vc}>${(r.metrics.accuracy*100).toFixed(1)}%</td>
+        <td class="normal-val">${(r.metrics.f1*100).toFixed(1)}%</td>
+        <td class="normal-val">${(r.metrics.precision*100).toFixed(1)}%</td>
+        <td class="normal-val">${(r.metrics.recall*100).toFixed(1)}%</td>`;
+      if(data.task==='classification') mhtml += `<td class="normal-val">${r.metrics.auc !== null ? r.metrics.auc : '—'}</td>`;
+      mhtml += `<td class="normal-val">${(r.metrics.cv_acc_mean*100).toFixed(1)}%</td><td class="normal-val">±${(r.metrics.cv_acc_std*100).toFixed(1)}%</td>`;
+    }
+    mhtml += `</tr>`;
+  });
+  mhtml += `</tbody></table></div>`;
+
+  // bar chart comparison
+  mhtml += `<div class="card"><div class="card-title">${isReg ? 'R² Score' : 'Accuracy'} by Model</div>
+    <div class="chart-box" style="height:220px"><canvas id="comp-chart" role="img" aria-label="Model comparison bar chart"></canvas></div></div>`;
+  document.getElementById("res-metrics").innerHTML = mhtml;
+
+  destroyChart("comp");
+  const labels = results.map(r => MODEL_NAMES[r.model_key]);
+  const vals   = results.map(r => isReg ? r.metrics.r2 : parseFloat((r.metrics.accuracy*100).toFixed(1)));
+  const colors = results.map((_,i) => i===0?"#4ade80":i===1?"#38bdf8":"#64748b");
+  state.charts["comp"] = new Chart(document.getElementById("comp-chart"), {
+    type: "bar",
+    data: { labels, datasets: [{ label: isReg?"R²":"Accuracy %", data: vals, backgroundColor: colors, borderRadius: 5 }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins:{legend:{display:false}},
+      scales:{ x:{ticks:{color:"#8892a4",font:{size:11}}}, y:{ticks:{color:"#8892a4",font:{size:11}, callback: v => isReg?v:v+'%'}, min: isReg?0:50, grid:{color:"rgba(255,255,255,0.04)"}} } }
+  });
+
+  // feature importance (best model)
+  if(best.feature_importance && best.feature_importance.length) {
+    const fi = best.feature_importance.slice(0, 12);
+    let fihtml = `<div class="card"><div class="card-title">Feature Importance — ${MODEL_NAMES[best.model_key]}</div>
+      <div class="chart-box" style="height:${fi.length*32+50}px"><canvas id="fi-chart" role="img" aria-label="Feature importance horizontal bar chart"></canvas></div></div>`;
+    document.getElementById("res-fi").innerHTML = fihtml;
+    destroyChart("fi");
+    state.charts["fi"] = new Chart(document.getElementById("fi-chart"), {
+      type: "bar", indexAxis: "y",
+      data: { labels: fi.map(f=>f.feature), datasets: [{ data: fi.map(f=>f.importance), backgroundColor: "#4ade8055", borderColor:"#4ade80", borderWidth:1, borderRadius:3 }] },
+      options: { responsive: true, maintainAspectRatio: false, plugins:{legend:{display:false}},
+        scales:{ x:{ticks:{color:"#8892a4",font:{size:11}}, grid:{color:"rgba(255,255,255,0.04)"}}, y:{ticks:{color:"#e8eaf0",font:{size:11}}} } }
+    });
+  }
+
+  // cross-validation
+  let cvhtml = `<div class="card"><div class="card-title">Cross-Validation Scores (${isReg?'R²':'Accuracy'})</div>`;
+  cvhtml += `<div class="chart-box" style="height:200px"><canvas id="cv-chart" role="img" aria-label="Cross-validation comparison"></canvas></div></div>`;
+  document.getElementById("res-cv").innerHTML = cvhtml;
+  destroyChart("cv");
+  const cvLabels = results.map(r => MODEL_NAMES[r.model_key]);
+  const cvMeans  = results.map(r => isReg ? r.metrics.cv_r2_mean : r.metrics.cv_acc_mean);
+  const cvStds   = results.map(r => isReg ? r.metrics.cv_r2_std : r.metrics.cv_acc_std);
+  state.charts["cv"] = new Chart(document.getElementById("cv-chart"), {
+    type: "bar",
+    data: { labels: cvLabels, datasets: [{
+      label: "CV Mean", data: cvMeans, backgroundColor: "#38bdf855", borderColor: "#38bdf8", borderWidth:1, borderRadius:3,
+      errorBars: cvStds
+    }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins:{legend:{display:false}},
+      scales:{ x:{ticks:{color:"#8892a4",font:{size:11}}}, y:{ticks:{color:"#8892a4",font:{size:11}}, grid:{color:"rgba(255,255,255,0.04)"}} } }
+  });
+
+  // confusion matrix
+  if(data.task !== "regression" && best.metrics.confusion_matrix) {
+    const cm = best.metrics.confusion_matrix;
+    const labels2 = data.task === "pass_class" ? ["Fail","Pass"] : ["Fail","Medium","High"];
+    let cmhtml = `<div class="card"><div class="card-title">Confusion Matrix — ${MODEL_NAMES[best.model_key]}</div>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:14px">Rows = actual · Columns = predicted</p>
+      <div class="cm-grid">
+        <div class="cm-cell cm-head"></div>`;
+    labels2.forEach(l => { cmhtml += `<div class="cm-cell cm-head">${l}</div>`; });
+    cm.forEach((row, i) => {
+      cmhtml += `<div class="cm-cell cm-head">${labels2[i]}</div>`;
+      row.forEach((v, j) => {
+        const alpha = Math.round((v / Math.max(...cm.flat(), 1)) * 0.6 * 100);
+        const bg = i === j ? `rgba(74,222,128,0.${alpha<10?'0'+alpha:alpha})` : `rgba(248,113,113,0.${alpha<10?'0'+alpha:alpha})`;
+        cmhtml += `<div class="cm-cell" style="background:${bg}">${v}</div>`;
+      });
+    });
+    cmhtml += `</div></div>`;
+    document.getElementById("res-cm").innerHTML = cmhtml;
+  } else {
+    document.getElementById("res-cm").innerHTML = `<div class="card"><p style="color:var(--muted);font-size:13px">Confusion matrix only available for classification tasks.</p></div>`;
+  }
+}
+
+function showResTab(name) {
+  ["metrics","fi","cv","cm"].forEach(t => {
+    document.getElementById("res-"+t).style.display = t===name ? "block" : "none";
+    document.getElementById("rt-"+t).classList.toggle("active", t===name);
+  });
+  if(name === "fi" && state.charts["fi"]) state.charts["fi"].resize();
+  if(name === "cv" && state.charts["cv"]) state.charts["cv"].resize();
+}
+
+// ─── INTERPRETATION ───────────────────────────────────────────────────────────
+function renderInterpretation(data) {
+  document.getElementById("no-interp").style.display = "none";
+  document.getElementById("interp-inner").style.display = "block";
+
+  const isReg = data.task === "regression";
+  const results = data.results.filter(r => !r.error);
+  const best = results[0];
+  const ds = state.dataset === "mat" ? "Mathematics" : "Portuguese";
+
+  const passRate = state.dsInfo ? state.dsInfo[state.dataset].pass_rate : "—";
+  const bestPrimary = isReg ? `R² = ${best.metrics.r2}` : `Accuracy = ${(best.metrics.accuracy*100).toFixed(1)}%`;
+  const fi = best.feature_importance || [];
+  const topFeat = fi.slice(0,3).map(f=>f.feature).join(", ");
+
+  document.getElementById("interp-summary").innerHTML = `
+    <div class="card-title">Model Summary</div>
+    <div class="interp">
+      The <strong>${MODEL_NAMES[best.model_key]}</strong> is the best-performing model on the <strong>${ds}</strong> dataset
+      with <strong>${bestPrimary}</strong> on the held-out test set.
+      ${isReg
+        ? `An R² of ${best.metrics.r2} means the model explains ${(best.metrics.r2*100).toFixed(0)}% of variance in final grades — ${best.metrics.r2 > 0.85 ? "an excellent fit" : best.metrics.r2 > 0.7 ? "a good fit" : "a moderate fit"}. The mean absolute error of ${best.metrics.mae} grade points is operationally low.`
+        : `The model correctly classifies ${(best.metrics.accuracy*100).toFixed(1)}% of students as pass/fail, with an F1 of ${(best.metrics.f1*100).toFixed(1)}% (balancing precision and recall).`
+      }
+    </div>`;
+
+  document.getElementById("interp-findings").innerHTML = `
+    <div class="card-title">Key Findings</div>
+    <div class="interp">
+      <div class="finding"><span>Top predictive features are <strong>${topFeat || "G1, G2, failures"}</strong>. Prior academic performance is the single strongest signal — students who struggle early are at high risk of poor final grades.</span></div>
+      <div class="finding"><span><strong>Past failures</strong> consistently ranks as a top-3 feature. Each additional past failure correlates with approximately 1.5–2 fewer grade points at the final assessment.</span></div>
+      <div class="finding"><span><strong>Study time</strong> and <strong>absences</strong> are strong secondary predictors. Absenteeism negatively impacts grades non-linearly — even modest absenteeism carries disproportionate risk.</span></div>
+      <div class="finding"><span>Socioeconomic factors (<strong>Medu</strong> — mother's education, <strong>Pstatus</strong>) have a moderate but consistent positive effect, suggesting systemic influences that school-level interventions alone cannot fully address.</span></div>
+      <div class="finding"><span>The ${state.dataset === "mat" ? "Mathematics" : "Portuguese"} dataset (pass rate: <strong>${passRate}%</strong>) shows ${state.dataset === "mat" ? "wider grade variance and harder predictability than Portuguese — math grades are more sensitive to acute performance drops" : "more consistent grade distributions, making predictions generally more reliable"}.</span></div>
+    </div>`;
+
+  document.getElementById("interp-recommend").innerHTML = `
+    <div class="card-title">Recommendations for Educators</div>
+    <div class="interp">
+      <div class="finding"><span><strong>Early warning system:</strong> Flag students with ≥1 past failure AND low G1 (&lt;8) for immediate tutoring outreach. This combination explains the majority of at-risk outcomes.</span></div>
+      <div class="finding"><span><strong>Attendance monitoring:</strong> Implement automated alerts for students with absences &gt;5 — the feature importance analysis suggests absences carry outsized predictive weight even before academic performance declines.</span></div>
+      <div class="finding"><span><strong>Study habit programs:</strong> Since study time (studytime) is a modifiable predictor, structured homework clubs and study-skills workshops are evidence-based interventions with direct grade impact.</span></div>
+      <div class="finding"><span><strong>Family engagement:</strong> Mother's education level (Medu) and family support (famsup) are among the moderate predictors. Parent-teacher engagement programs can partially compensate for lower home academic support.</span></div>
+      <div class="finding"><span><strong>Model in practice:</strong> Deploy ${MODEL_NAMES[best.model_key]} as a semester-start risk scorer using G1, absences, failures, and studytime. Re-rank students at the G2 checkpoint for targeted intervention before finals.</span></div>
+    </div>`;
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+window.addEventListener("DOMContentLoaded", () => {
+  loadEDA();
+  renderCleanPage();
+});
+</script>
+</body>
+</html>

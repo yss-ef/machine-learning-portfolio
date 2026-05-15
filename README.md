@@ -9,6 +9,10 @@ Focused on **Customer Intelligence**, this project leverages unsupervised learni
 
 ### Telecom Churn Prediction (Subject 02)
 A predictive modeling pipeline designed to analyze and forecast customer churn for a telecommunications provider. Using classification algorithms and exploratory data analysis, the project identifies key attrition drivers, allowing for proactive customer engagement to reduce turnover.
+
+### Student Success Analysis & Platform (Subject 03)
+An end-to-end analytical project aimed at improving academic outcomes for high school students. This project combines deep exploratory analysis with a Flask-based interactive platform. Using K-Means clustering and Random Forest importance, it identifies risk factors and provides pedagogical recommendations to support student success.
+
 ## Repository Structure
 
 ```text
@@ -16,9 +20,9 @@ machine-learning-portfolio/
 ├── data/                    # Specialized industry datasets
 │   └── raw/                 # Sources for banking, retail, healthcare, etc.
 ├── mini-projects/           # End-to-end business subjects
-...
 │   ├── subject-01-ecommerce/ # E-commerce Customer Segmentation
-│   └── subject-02-telecom/   # Telecom Churn Prediction
+│   ├── subject-02-telecom/   # Telecom Churn Prediction
+│   └── subject-03-student-success/ # Student Success Analysis & Platform
 └── labs-tp/                 # Technical labs and algorithm implementations
     ├── basic-exercises/     # Foundations with NumPy and Pandas
     ├── clustering/          # K-Means, DBSCAN, and CAH methodologies
