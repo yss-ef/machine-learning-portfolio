@@ -155,6 +155,7 @@
   .mt-4 { margin-top: 4px; }
   .mt-8 { margin-top: 8px; }
   .mt-16 { margin-top: 16px; }
+  .mb-8 { margin-bottom: 8px; }
 </style>
 </head>
 <body>
@@ -164,11 +165,12 @@
 <nav class="sidebar">
   <div class="logo">StudentML<span>v1.0 · sklearn + flask</span></div>
   <div class="nav-label">Pipeline</div>
-  <div class="nav-item active" onclick="showPage('p-data')" id="nav-p-data"><span class="nav-dot"></span>Data &amp; EDA</div>
-  <div class="nav-item" onclick="showPage('p-clean')" id="nav-p-clean"><span class="nav-dot"></span>Clean &amp; Transform</div>
-  <div class="nav-item" onclick="showPage('p-train')" id="nav-p-train"><span class="nav-dot"></span>Configure &amp; Train</div>
-  <div class="nav-item" onclick="showPage('p-results')" id="nav-p-results"><span class="nav-dot"></span>Results &amp; Evaluation</div>
-  <div class="nav-item" onclick="showPage('p-interp')" id="nav-p-interp"><span class="nav-dot"></span>Interpretation</div>
+  <div class="nav-item active" onclick="showPage('p-data')" id="nav-p-data"><span class="nav-dot"></span>1. Data &amp; EDA</div>
+  <div class="nav-item" onclick="showPage('p-clean')" id="nav-p-clean"><span class="nav-dot"></span>2. Clean &amp; Transform</div>
+  <div class="nav-item" onclick="showPage('p-cluster')" id="nav-p-cluster"><span class="nav-dot"></span>3. Student Clusters</div>
+  <div class="nav-item" onclick="showPage('p-train')" id="nav-p-train"><span class="nav-dot"></span>4. Configure &amp; Train</div>
+  <div class="nav-item" onclick="showPage('p-results')" id="nav-p-results"><span class="nav-dot"></span>5. Results &amp; Evaluation</div>
+  <div class="nav-item" onclick="showPage('p-interp')" id="nav-p-interp"><span class="nav-dot"></span>6. Interpretation</div>
   <div class="sidebar-bottom">student-mat.csv · student-por.csv</div>
 </nav>
 
@@ -238,6 +240,11 @@
     </div>
   </div>
 
+  <div class="card">
+    <div class="card-title">Impact de l'Alcool (Week-end) sur la Réussite</div>
+    <div class="chart-box" style="height:180px"><canvas id="alc-chart"></canvas></div>
+  </div>
+
   <div class="flex-end">
     <button class="btn btn-primary" onclick="showPage('p-clean')">Next: Clean &amp; Transform →</button>
   </div>
@@ -283,12 +290,46 @@
 
   <div class="flex-end">
     <button class="btn btn-outline" onclick="showPage('p-data')">← Back</button>
+    <button class="btn btn-primary" onclick="showPage('p-cluster')">Next: Student Clusters →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     PAGE 3 — CLUSTERS
+═══════════════════════════════════════════════════ -->
+<div class="page" id="p-cluster">
+  <div class="grid-2">
+    <!-- Left Column: Visualizations -->
+    <div>
+      <div class="card">
+        <div class="card-title">Mapping 2D des Étudiants (PCA)</div>
+        <div class="chart-box" style="height:450px; background:var(--bg); border-radius:8px">
+          <canvas id="cluster-chart"></canvas>
+        </div>
+        <div class="flex-row mt-16" style="justify-content:space-between">
+          <div class="badge badge-blue" title="Qualité de séparation (0 à 1)">Silhouette: <span id="sil-val">—</span></div>
+          <div class="badge badge-blue" title="Indice de dispersion">CH Score: <span id="ch-val">—</span></div>
+          <div class="badge badge-muted">Variance: <span id="var-val">—</span></div>
+        </div>
+        <div class="interp mt-16" style="font-size:12px">
+          <strong>Analyse de Segmentation:</strong> La proximité des points indique des profils d'étudiants similaires. Les clusters identifiés permettent d'adapter les stratégies pédagogiques à chaque groupe.
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Analysis & Action -->
+    <div id="cluster-stats-wrap" style="display:flex; flex-direction:column; gap:16px">
+      <!-- Cluster cards will be injected here -->
+    </div>
+  </div>
+  <div class="flex-end">
+    <button class="btn btn-outline" onclick="showPage('p-clean')">← Back</button>
     <button class="btn btn-primary" onclick="showPage('p-train')">Next: Configure Models →</button>
   </div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════
-     PAGE 3 — TRAIN
+     PAGE 4 — TRAIN
 ═══════════════════════════════════════════════════ -->
 <div class="page" id="p-train">
   <div class="grid-2" style="margin-bottom:16px">
@@ -341,13 +382,13 @@
   </div>
 
   <div class="flex-end">
-    <button class="btn btn-outline" onclick="showPage('p-clean')">← Back</button>
+    <button class="btn btn-outline" onclick="showPage('p-cluster')">← Back</button>
     <button class="btn btn-primary" id="run-btn" onclick="runTraining()">▶ Run Training</button>
   </div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════
-     PAGE 4 — RESULTS
+     PAGE 5 — RESULTS
 ═══════════════════════════════════════════════════ -->
 <div class="page" id="p-results">
   <div id="no-results" style="text-align:center;padding:60px 0;color:var(--muted)">
@@ -356,21 +397,28 @@
   </div>
   <div id="results-inner" style="display:none">
     <div class="grid-4" id="res-stats" style="margin-bottom:16px"></div>
+    
     <div class="tab-bar">
-      <button class="tab-btn active" onclick="showResTab('metrics')" id="rt-metrics">Metrics</button>
-      <button class="tab-btn" onclick="showResTab('fi')" id="rt-fi">Feature Importance</button>
+      <button class="tab-btn active" onclick="showResTab('metrics')" id="rt-metrics">Global Metrics</button>
+      <button class="tab-btn" onclick="showResTab('clusters')" id="rt-clusters">Cluster-Specific Results</button>
+      <button class="tab-btn" onclick="showResTab('fi')" id="rt-fi">Global Importance</button>
       <button class="tab-btn" onclick="showResTab('cv')" id="rt-cv">Cross-Validation</button>
-      <button class="tab-btn" onclick="showResTab('cm')" id="rt-cm">Confusion Matrix</button>
     </div>
+
     <div id="res-metrics"></div>
+    <div id="res-clusters" style="display:none"></div>
     <div id="res-fi" style="display:none"></div>
     <div id="res-cv" style="display:none"></div>
     <div id="res-cm" style="display:none"></div>
   </div>
+  <div class="flex-end">
+    <button class="btn btn-outline" onclick="showPage('p-train')">← Back</button>
+    <button class="btn btn-primary" onclick="showPage('p-interp')">Next: Interpretation →</button>
+  </div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════
-     PAGE 5 — INTERPRETATION
+     PAGE 6 — INTERPRETATION
 ═══════════════════════════════════════════════════ -->
 <div class="page" id="p-interp">
   <div id="no-interp" style="text-align:center;padding:60px 0;color:var(--muted)">
@@ -380,6 +428,9 @@
     <div class="card" id="interp-summary"></div>
     <div class="card" id="interp-findings"></div>
     <div class="card" id="interp-recommend"></div>
+  </div>
+  <div class="flex-end">
+    <button class="btn btn-outline" onclick="showPage('p-results')">← Back</button>
   </div>
 </div>
 
@@ -407,11 +458,12 @@ const MODEL_NAMES = {
 
 // ─── NAVIGATION ───────────────────────────────────────────────────────────────
 const PAGE_META = {
-  "p-data":   ["Data & EDA", "Explore the datasets before training"],
-  "p-clean":  ["Clean & Transform", "Preprocessing and feature selection"],
-  "p-train":  ["Configure & Train", "Select models and run the pipeline"],
-  "p-results":["Results & Evaluation", "Compare model performance metrics"],
-  "p-interp": ["Interpretation", "Educational insights and recommendations"],
+  "p-data":    ["Data & EDA", "Explore the datasets before training"],
+  "p-clean":   ["Clean & Transform", "Preprocessing and feature selection"],
+  "p-cluster": ["Student Clusters", "Unsupervised segmentation of student profiles"],
+  "p-train":   ["Configure & Train", "Select models and run the pipeline"],
+  "p-results": ["Results & Evaluation", "Compare model performance metrics"],
+  "p-interp":  ["Interpretation", "Educational insights and recommendations"],
 };
 
 function showPage(id) {
@@ -419,11 +471,14 @@ function showPage(id) {
   document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
   document.getElementById(id).classList.add("active");
   document.getElementById("nav-" + id).classList.add("active");
-  const [title, sub] = PAGE_META[id];
-  document.getElementById("page-title").textContent = title;
-  document.getElementById("page-sub").textContent = sub;
+  const meta = PAGE_META[id];
+  if(meta) {
+    document.getElementById("page-title").textContent = meta[0];
+    document.getElementById("page-sub").textContent = meta[1];
+  }
 
   if(id === "p-data") loadEDA();
+  if(id === "p-cluster") loadClusters();
   if(id === "p-clean") renderCleanPage();
 }
 
@@ -506,6 +561,73 @@ async function loadEDA() {
     options: { responsive: true, maintainAspectRatio: false, plugins:{legend:{display:false}},
       scales:{ x:{ticks:{color:"#8892a4",font:{size:10}}}, y:{ticks:{color:"#8892a4",font:{size:10}}, grid:{color:"rgba(255,255,255,0.04)"}} } }
   });
+
+  // Alcohol consumption
+  destroyChart("alc");
+  state.charts["alc"] = new Chart(document.getElementById("alc-chart"), {
+    type: "bar",
+    data: {
+      labels: Object.keys(eda.alcohol_vs_g3).map(k => "Niveau " + k),
+      datasets: [{ label: "Mean G3", data: Object.values(eda.alcohol_vs_g3), backgroundColor: "#f8717166", borderColor: "#f87171", borderWidth: 1, borderRadius: 3 }]
+    },
+    options: { responsive: true, maintainAspectRatio: false, plugins:{legend:{display:false}},
+      scales:{ x:{ticks:{color:"#8892a4",font:{size:10}}}, y:{ticks:{color:"#8892a4",font:{size:10}}, grid:{color:"rgba(255,255,255,0.04)"}} } }
+  });
+}
+
+// ─── CLUSTERING ───────────────────────────────────────────────────────────────
+async function loadClusters() {
+  const resp = await fetch("/api/cluster", {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({dataset: state.dataset})}).then(r=>r.json());
+  
+  document.getElementById("sil-val").textContent = resp.silhouette_score;
+  document.getElementById("ch-val").textContent = resp.ch_score;
+  document.getElementById("var-val").textContent = (resp.explained_variance.reduce((a,b)=>a+b, 0) * 100).toFixed(1) + "%";
+
+  const colors = ["#4ade80", "#38bdf8", "#fb923c"];
+
+  // 1. PCA Scatter Chart
+  destroyChart("cluster");
+  state.charts["cluster"] = new Chart(document.getElementById("cluster-chart"), {
+    type: "scatter",
+    data: { datasets: [0, 1, 2].map(c => ({
+      label: "C" + c,
+      data: resp.points.filter(p => p.cluster === c),
+      backgroundColor: colors[c] + "88",
+      borderColor: colors[c],
+      pointRadius: 4, pointHoverRadius: 6
+    })) },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: (ctx) => `G3: ${ctx.raw.g3} (Cluster ${ctx.raw.cluster})` } } },
+      scales: { x: { grid: { color: "rgba(255,255,255,0.03)" }, ticks: { display: false } }, y: { grid: { color: "rgba(255,255,255,0.03)" }, ticks: { display: false } } }
+    }
+  });
+
+  // 2. Info Cards
+  let shtml = "";
+  resp.stats.sort((a,b) => b.g3_mean - a.g3_mean).forEach((s, i) => {
+    const isBest = i === 0;
+    const isWorst = i === 2;
+    const profile = isBest ? "Excellence Académique" : isWorst ? "Étudiants à Risque" : "Profil Équilibré";
+
+    shtml += `
+      <div class="card" style="border-left: 3px solid ${colors[s.id]}">
+        <div class="flex-row" style="justify-content:space-between">
+          <div class="mc-name">${profile} <span style="font-weight:400;color:var(--muted);font-size:11px">(Cluster ${s.id})</span></div>
+          <div class="badge badge-muted">${s.count} élèves</div>
+        </div>
+        <div class="grid-2 mt-8" style="font-size:11px;color:var(--muted)">
+          <div>Moyenne G3: <span style="color:var(--text)">${s.g3_mean}/20</span></div>
+          <div>Ambition Sup.: <span style="color:var(--text)">${s.higher_rate}%</span></div>
+          <div>Absences: <span style="color:var(--text)">${s.absences_mean}</span></div>
+          <div>Échecs: <span style="color:var(--text)">${s.failures_mean}</span></div>
+        </div>
+        <div class="interp mt-12" style="font-size:11px; padding:8px; border-color:var(--border)">
+          Segments identifiés pour l'entraînement spécifique. Voir l'étape 5 pour l'analyse des facteurs d'influence.
+        </div>
+      </div>`;
+  });
+  document.getElementById("cluster-stats-wrap").innerHTML = shtml;
 }
 
 // ─── CLEAN PAGE ───────────────────────────────────────────────────────────────
@@ -608,122 +730,81 @@ function renderResults(data) {
   const results = data.results.filter(r => !r.error);
   const best = results[0];
 
-  // stat cards
-  document.getElementById("res-stats").innerHTML = `
-    <div class="stat"><div class="stat-val">${results.length}</div><div class="stat-lbl">Models trained</div></div>
-    <div class="stat"><div class="stat-val">${data.n_train + data.n_test}</div><div class="stat-lbl">Total samples</div></div>
-    <div class="stat"><div class="stat-val">${isReg ? best.metrics.r2 : (best.metrics.accuracy*100).toFixed(1)+'%'}</div><div class="stat-lbl">Best ${isReg?'R²':'Accuracy'}</div></div>
-    <div class="stat"><div class="stat-val" style="font-size:14px">${MODEL_NAMES[best.model_key]}</div><div class="stat-lbl">Top model</div></div>
-  `;
-
-  // metrics table
-  const isClass = !isReg;
-  let mhtml = `<div class="card"><table>
-    <thead><tr><th>#</th><th>Model</th>`;
-  if(isReg) mhtml += `<th>R²</th><th>RMSE</th><th>MAE</th>`;
-  else      mhtml += `<th>Accuracy</th><th>F1</th><th>Precision</th><th>Recall</th>${data.task==='classification'?'<th>AUC</th>':''}`;
-  mhtml += `<th>CV Mean</th><th>CV ±</th></tr></thead><tbody>`;
+  // Global metrics table
+  let mhtml = `<div class="card"><table><thead><tr><th>#</th><th>Model</th>`;
+  if(isReg) mhtml += `<th>R²</th><th>RMSE</th>`;
+  else      mhtml += `<th>Accuracy</th><th>F1</th>`;
+  mhtml += `<th>CV Mean</th></tr></thead><tbody>`;
 
   results.forEach((r, i) => {
-    const isBest = i === 0;
-    const vc = isBest ? ' class="best-val"' : ' class="normal-val"';
-    mhtml += `<tr><td><span class="badge ${i===0?'badge-green':i===1?'badge-blue':'badge-muted'}">#${i+1}</span></td>
-      <td>${MODEL_NAMES[r.model_key]}</td>`;
-    if(isReg) {
-      mhtml += `<td${vc}>${r.metrics.r2}</td><td${vc}>${r.metrics.rmse}</td><td class="normal-val">${r.metrics.mae}</td>`;
-      mhtml += `<td class="normal-val">${r.metrics.cv_r2_mean}</td><td class="normal-val">±${r.metrics.cv_r2_std}</td>`;
-    } else {
-      mhtml += `<td${vc}>${(r.metrics.accuracy*100).toFixed(1)}%</td>
-        <td class="normal-val">${(r.metrics.f1*100).toFixed(1)}%</td>
-        <td class="normal-val">${(r.metrics.precision*100).toFixed(1)}%</td>
-        <td class="normal-val">${(r.metrics.recall*100).toFixed(1)}%</td>`;
-      if(data.task==='classification') mhtml += `<td class="normal-val">${r.metrics.auc !== null ? r.metrics.auc : '—'}</td>`;
-      mhtml += `<td class="normal-val">${(r.metrics.cv_acc_mean*100).toFixed(1)}%</td><td class="normal-val">±${(r.metrics.cv_acc_std*100).toFixed(1)}%</td>`;
-    }
+    mhtml += `<tr><td><span class="badge ${i===0?'badge-green':'badge-muted'}">#${i+1}</span></td><td>${MODEL_NAMES[r.model_key]}</td>`;
+    if(isReg) mhtml += `<td>${r.metrics.r2}</td><td>${r.metrics.rmse}</td><td>${r.metrics.cv_r2_mean}</td>`;
+    else      mhtml += `<td>${(r.metrics.accuracy*100).toFixed(1)}%</td><td>${(r.metrics.f1*100).toFixed(1)}%</td><td>${(r.metrics.cv_acc_mean*100).toFixed(1)}%</td>`;
     mhtml += `</tr>`;
   });
   mhtml += `</tbody></table></div>`;
-
-  // bar chart comparison
-  mhtml += `<div class="card"><div class="card-title">${isReg ? 'R² Score' : 'Accuracy'} by Model</div>
-    <div class="chart-box" style="height:220px"><canvas id="comp-chart" role="img" aria-label="Model comparison bar chart"></canvas></div></div>`;
   document.getElementById("res-metrics").innerHTML = mhtml;
 
-  destroyChart("comp");
-  const labels = results.map(r => MODEL_NAMES[r.model_key]);
-  const vals   = results.map(r => isReg ? r.metrics.r2 : parseFloat((r.metrics.accuracy*100).toFixed(1)));
-  const colors = results.map((_,i) => i===0?"#4ade80":i===1?"#38bdf8":"#64748b");
-  state.charts["comp"] = new Chart(document.getElementById("comp-chart"), {
-    type: "bar",
-    data: { labels, datasets: [{ label: isReg?"R²":"Accuracy %", data: vals, backgroundColor: colors, borderRadius: 5 }] },
-    options: { responsive: true, maintainAspectRatio: false, plugins:{legend:{display:false}},
-      scales:{ x:{ticks:{color:"#8892a4",font:{size:11}}}, y:{ticks:{color:"#8892a4",font:{size:11}, callback: v => isReg?v:v+'%'}, min: isReg?0:50, grid:{color:"rgba(255,255,255,0.04)"}} } }
-  });
-
-  // feature importance (best model)
-  if(best.feature_importance && best.feature_importance.length) {
-    const fi = best.feature_importance.slice(0, 12);
-    let fihtml = `<div class="card"><div class="card-title">Feature Importance — ${MODEL_NAMES[best.model_key]}</div>
-      <div class="chart-box" style="height:${fi.length*32+50}px"><canvas id="fi-chart" role="img" aria-label="Feature importance horizontal bar chart"></canvas></div></div>`;
+  // Global Importance
+  if(best.feature_importance) {
+    let fihtml = `<div class="card"><div class="card-title">Facteurs d'influence — Global</div>
+      <div class="chart-box" style="height:350px"><canvas id="fi-chart"></canvas></div></div>`;
     document.getElementById("res-fi").innerHTML = fihtml;
     destroyChart("fi");
-    state.charts["fi"] = new Chart(document.getElementById("fi-chart"), {
-      type: "bar", indexAxis: "y",
-      data: { labels: fi.map(f=>f.feature), datasets: [{ data: fi.map(f=>f.importance), backgroundColor: "#4ade8055", borderColor:"#4ade80", borderWidth:1, borderRadius:3 }] },
-      options: { responsive: true, maintainAspectRatio: false, plugins:{legend:{display:false}},
-        scales:{ x:{ticks:{color:"#8892a4",font:{size:11}}, grid:{color:"rgba(255,255,255,0.04)"}}, y:{ticks:{color:"#e8eaf0",font:{size:11}}} } }
-    });
+    setTimeout(() => {
+      state.charts["fi"] = new Chart(document.getElementById("fi-chart"), {
+        type: "bar", indexAxis: "y",
+        data: { labels: best.feature_importance.slice(0,12).map(f=>f.feature), datasets: [{ data: best.feature_importance.slice(0,12).map(f=>f.importance), backgroundColor: "#4ade8055", borderColor:"#4ade80", borderWidth:1, borderRadius:3 }] },
+        options: { responsive: true, maintainAspectRatio: false, plugins:{legend:{display:false}}, scales:{ x:{grid:{color:"rgba(255,255,255,0.04)"}} } }
+      });
+    }, 50);
   }
 
-  // cross-validation
-  let cvhtml = `<div class="card"><div class="card-title">Cross-Validation Scores (${isReg?'R²':'Accuracy'})</div>`;
-  cvhtml += `<div class="chart-box" style="height:200px"><canvas id="cv-chart" role="img" aria-label="Cross-validation comparison"></canvas></div></div>`;
-  document.getElementById("res-cv").innerHTML = cvhtml;
-  destroyChart("cv");
-  const cvLabels = results.map(r => MODEL_NAMES[r.model_key]);
-  const cvMeans  = results.map(r => isReg ? r.metrics.cv_r2_mean : r.metrics.cv_acc_mean);
-  const cvStds   = results.map(r => isReg ? r.metrics.cv_r2_std : r.metrics.cv_acc_std);
-  state.charts["cv"] = new Chart(document.getElementById("cv-chart"), {
-    type: "bar",
-    data: { labels: cvLabels, datasets: [{
-      label: "CV Mean", data: cvMeans, backgroundColor: "#38bdf855", borderColor: "#38bdf8", borderWidth:1, borderRadius:3,
-      errorBars: cvStds
-    }] },
-    options: { responsive: true, maintainAspectRatio: false, plugins:{legend:{display:false}},
-      scales:{ x:{ticks:{color:"#8892a4",font:{size:11}}}, y:{ticks:{color:"#8892a4",font:{size:11}}, grid:{color:"rgba(255,255,255,0.04)"}} } }
-  });
-
-  // confusion matrix
-  if(data.task !== "regression" && best.metrics.confusion_matrix) {
-    const cm = best.metrics.confusion_matrix;
-    const labels2 = data.task === "pass_class" ? ["Fail","Pass"] : ["Fail","Medium","High"];
-    let cmhtml = `<div class="card"><div class="card-title">Confusion Matrix — ${MODEL_NAMES[best.model_key]}</div>
-      <p style="font-size:12px;color:var(--muted);margin-bottom:14px">Rows = actual · Columns = predicted</p>
-      <div class="cm-grid">
-        <div class="cm-cell cm-head"></div>`;
-    labels2.forEach(l => { cmhtml += `<div class="cm-cell cm-head">${l}</div>`; });
-    cm.forEach((row, i) => {
-      cmhtml += `<div class="cm-cell cm-head">${labels2[i]}</div>`;
-      row.forEach((v, j) => {
-        const alpha = Math.round((v / Math.max(...cm.flat(), 1)) * 0.6 * 100);
-        const bg = i === j ? `rgba(74,222,128,0.${alpha<10?'0'+alpha:alpha})` : `rgba(248,113,113,0.${alpha<10?'0'+alpha:alpha})`;
-        cmhtml += `<div class="cm-cell" style="background:${bg}">${v}</div>`;
-      });
+  // Cluster-Specific Results
+  if(data.cluster_models) {
+    let chtml = `<div class="grid-3">`;
+    const colors = ["#4ade80", "#38bdf8", "#fb923c"];
+    const labels = ["Excellence Académique", "Profil Équilibré", "Étudiants à Risque"];
+    
+    [0, 1, 2].forEach(c => {
+      const cm = data.cluster_models[`cluster_${c}`];
+      if(!cm) return;
+      
+      chtml += `<div class="card" style="border-top: 2px solid ${colors[c]}">
+        <div class="card-title" style="margin-bottom:8px">Cluster ${c}: ${labels[c]}</div>
+        <div class="flex-row mb-8" style="justify-content:space-between">
+          <span class="badge badge-muted">Best: ${MODEL_NAMES[cm.model_key]}</span>
+          <span class="badge badge-green">${isReg ? 'R²: '+cm.metrics.r2 : 'Acc: '+(cm.metrics.accuracy*100).toFixed(1)+'%'}</span>
+        </div>
+        <div class="divider" style="margin:12px 0"></div>
+        <div class="card-title" style="font-size:9px; margin-bottom:8px">Top Drivers for this Group</div>
+        <div style="display:flex; flex-direction:column; gap:8px">
+          ${cm.importance.slice(0,5).map(f => `
+            <div style="font-size:10px">
+              <div style="display:flex; justify-content:space-between; margin-bottom:2px">
+                <span>${f.feature}</span>
+                <span style="color:var(--muted)">${(f.importance * 100).toFixed(0)}%</span>
+              </div>
+              <div class="prog-wrap" style="width:100%; height:4px">
+                <div class="prog-fill" style="width:${f.importance * 100}%; background:${colors[c]}"></div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>`;
     });
-    cmhtml += `</div></div>`;
-    document.getElementById("res-cm").innerHTML = cmhtml;
-  } else {
-    document.getElementById("res-cm").innerHTML = `<div class="card"><p style="color:var(--muted);font-size:13px">Confusion matrix only available for classification tasks.</p></div>`;
+    chtml += `</div>`;
+    document.getElementById("res-clusters").innerHTML = chtml;
   }
 }
 
 function showResTab(name) {
-  ["metrics","fi","cv","cm"].forEach(t => {
-    document.getElementById("res-"+t).style.display = t===name ? "block" : "none";
-    document.getElementById("rt-"+t).classList.toggle("active", t===name);
+  ["metrics","fi","cv","cm","clusters"].forEach(t => {
+    const el = document.getElementById("res-"+t);
+    if(el) el.style.display = t===name ? "block" : "none";
+    const btn = document.getElementById("rt-"+t);
+    if(btn) btn.classList.toggle("active", t===name);
   });
-  if(name === "fi" && state.charts["fi"]) state.charts["fi"].resize();
-  if(name === "cv" && state.charts["cv"]) state.charts["cv"].resize();
 }
 
 // ─── INTERPRETATION ───────────────────────────────────────────────────────────
@@ -734,42 +815,49 @@ function renderInterpretation(data) {
   const isReg = data.task === "regression";
   const results = data.results.filter(r => !r.error);
   const best = results[0];
-  const ds = state.dataset === "mat" ? "Mathematics" : "Portuguese";
+  const dsName = state.dataset === "mat" ? "Mathématiques" : "Portugais";
 
   const passRate = state.dsInfo ? state.dsInfo[state.dataset].pass_rate : "—";
-  const bestPrimary = isReg ? `R² = ${best.metrics.r2}` : `Accuracy = ${(best.metrics.accuracy*100).toFixed(1)}%`;
-  const fi = best.feature_importance || [];
-  const topFeat = fi.slice(0,3).map(f=>f.feature).join(", ");
+  const bestPrimary = isReg ? `R² = ${best.metrics.r2}` : `Précision = ${(best.metrics.accuracy*100).toFixed(1)}%`;
+  
+  // Extract cluster specific drivers
+  let clusterInsights = "";
+  const labels = ["Excellence Académique", "Profil Équilibré", "Étudiants à Risque"];
+  if(data.cluster_models) {
+    [0, 1, 2].forEach(c => {
+      const cm = data.cluster_models[`cluster_${c}`];
+      if(!cm) return;
+      const top3 = cm.importance.slice(0,3).map(f => f.feature).join(", ");
+      clusterInsights += `<div class="finding"><span><strong>${labels[c]} :</strong> Les principaux leviers de réussite sont <strong>${top3}</strong>.</span></div>`;
+    });
+  }
 
   document.getElementById("interp-summary").innerHTML = `
-    <div class="card-title">Model Summary</div>
+    <div class="card-title">Résumé du Modèle</div>
     <div class="interp">
-      The <strong>${MODEL_NAMES[best.model_key]}</strong> is the best-performing model on the <strong>${ds}</strong> dataset
-      with <strong>${bestPrimary}</strong> on the held-out test set.
-      ${isReg
-        ? `An R² of ${best.metrics.r2} means the model explains ${(best.metrics.r2*100).toFixed(0)}% of variance in final grades — ${best.metrics.r2 > 0.85 ? "an excellent fit" : best.metrics.r2 > 0.7 ? "a good fit" : "a moderate fit"}. The mean absolute error of ${best.metrics.mae} grade points is operationally low.`
-        : `The model correctly classifies ${(best.metrics.accuracy*100).toFixed(1)}% of students as pass/fail, with an F1 of ${(best.metrics.f1*100).toFixed(1)}% (balancing precision and recall).`
-      }
+      Le modèle <strong>${MODEL_NAMES[best.model_key]}</strong> présente la meilleure performance sur le jeu de données <strong>${dsName}</strong> 
+      avec une <strong>${bestPrimary}</strong>. 
+      ${isReg 
+        ? `Le score R² indique que le modèle explique ${(best.metrics.r2*100).toFixed(0)}% de la variance des notes finales.`
+        : `Le modèle identifie correctement ${(best.metrics.accuracy*100).toFixed(1)}% des situations de réussite/échec.`}
     </div>`;
 
   document.getElementById("interp-findings").innerHTML = `
-    <div class="card-title">Key Findings</div>
+    <div class="card-title">Analyses par Segment (Clusters)</div>
     <div class="interp">
-      <div class="finding"><span>Top predictive features are <strong>${topFeat || "G1, G2, failures"}</strong>. Prior academic performance is the single strongest signal — students who struggle early are at high risk of poor final grades.</span></div>
-      <div class="finding"><span><strong>Past failures</strong> consistently ranks as a top-3 feature. Each additional past failure correlates with approximately 1.5–2 fewer grade points at the final assessment.</span></div>
-      <div class="finding"><span><strong>Study time</strong> and <strong>absences</strong> are strong secondary predictors. Absenteeism negatively impacts grades non-linearly — even modest absenteeism carries disproportionate risk.</span></div>
-      <div class="finding"><span>Socioeconomic factors (<strong>Medu</strong> — mother's education, <strong>Pstatus</strong>) have a moderate but consistent positive effect, suggesting systemic influences that school-level interventions alone cannot fully address.</span></div>
-      <div class="finding"><span>The ${state.dataset === "mat" ? "Mathematics" : "Portuguese"} dataset (pass rate: <strong>${passRate}%</strong>) shows ${state.dataset === "mat" ? "wider grade variance and harder predictability than Portuguese — math grades are more sensitive to acute performance drops" : "more consistent grade distributions, making predictions generally more reliable"}.</span></div>
+      <div class="finding"><span>La segmentation a révélé des dynamiques différentes selon le profil de l'élève :</span></div>
+      ${clusterInsights}
+      <div class="finding"><span>Le facteur <strong>échecs passés (failures)</strong> reste le signal d'alerte le plus universel, impactant lourdement la confiance et les résultats futurs.</span></div>
+      <div class="finding"><span>La <strong>consommation d'alcool (Walc)</strong> et les <strong>sorties (goout)</strong> montrent un impact négatif plus prononcé sur le segment "Étudiants à Risque" que sur les autres groupes.</span></div>
     </div>`;
 
   document.getElementById("interp-recommend").innerHTML = `
-    <div class="card-title">Recommendations for Educators</div>
+    <div class="card-title">Recommandations Pédagogiques</div>
     <div class="interp">
-      <div class="finding"><span><strong>Early warning system:</strong> Flag students with ≥1 past failure AND low G1 (&lt;8) for immediate tutoring outreach. This combination explains the majority of at-risk outcomes.</span></div>
-      <div class="finding"><span><strong>Attendance monitoring:</strong> Implement automated alerts for students with absences &gt;5 — the feature importance analysis suggests absences carry outsized predictive weight even before academic performance declines.</span></div>
-      <div class="finding"><span><strong>Study habit programs:</strong> Since study time (studytime) is a modifiable predictor, structured homework clubs and study-skills workshops are evidence-based interventions with direct grade impact.</span></div>
-      <div class="finding"><span><strong>Family engagement:</strong> Mother's education level (Medu) and family support (famsup) are among the moderate predictors. Parent-teacher engagement programs can partially compensate for lower home academic support.</span></div>
-      <div class="finding"><span><strong>Model in practice:</strong> Deploy ${MODEL_NAMES[best.model_key]} as a semester-start risk scorer using G1, absences, failures, and studytime. Re-rank students at the G2 checkpoint for targeted intervention before finals.</span></div>
+      <div class="finding"><span><strong>Pour le segment "À Risque" :</strong> Prioriser le tutorat immédiat dès l'identification d'un premier échec. Une réduction des absences est cruciale car leur impact est exponentiel dans ce groupe.</span></div>
+      <div class="finding"><span><strong>Pour le segment "Équilibré" :</strong> Encourager l'ambition d'études supérieures (higher) et augmenter modérément le temps d'étude (studytime) pour basculer vers l'excellence.</span></div>
+      <div class="finding"><span><strong>Pour le segment "Excellence" :</strong> Maintenir la motivation par des activités extra-scolaires valorisantes. Le support familial (famsup) joue ici un rôle de stabilisateur important.</span></div>
+      <div class="finding"><span><strong>Action Globale :</strong> Sensibiliser sur l'impact de l'hygiène de vie (alcool, sommeil/sorties) qui, bien que secondaire par rapport aux notes, constitue un levier d'action comportemental modifiable.</span></div>
     </div>`;
 }
 

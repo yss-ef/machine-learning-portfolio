@@ -16,15 +16,26 @@ from sklearn.svm import SVR, SVC
 from sklearn.metrics import (
     accuracy_score, f1_score, precision_score, recall_score, roc_auc_score,
     mean_squared_error, mean_absolute_error, r2_score,
-    confusion_matrix, classification_report
+    confusion_matrix, classification_report, silhouette_score, calinski_harabasz_score
 )
+from sklearn.decomposition import PCA
+from sklearn.cluster import KMeans
 
 app = Flask(__name__)
 
-DATA_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# Global state to persist models for individual predictions
+# Now supports a dictionary: 'global', 'cluster_0', 'cluster_1', 'cluster_2'
+APP_STATE = {
+    "models": {}, # { 'global': {model, scaler, feature_names, task, metrics, importance}, 'cluster_0': ... }
+    "dataset_key": None,
+    "target_mode": None,
+    "categorical_cols": [],
+}
+
+DATA_DIR = os.path.dirname(os.path.abspath(__file__))
 DATASETS = {
-    "mat": os.path.join(DATA_DIR, "data", "student-mat.csv"),
-    "por": os.path.join(DATA_DIR, "data", "student-por.csv"),
+    "mat": os.path.join(DATA_DIR, "student-mat.csv"),
+    "por": os.path.join(DATA_DIR, "student-por.csv"),
 }
 
 # ─── helpers ──────────────────────────────────────────────────────────────────
@@ -59,11 +70,11 @@ def load_and_clean(dataset_key, target_mode, selected_features=None):
         raise ValueError("Unknown target mode")
 
     # ── feature set
-    drop_cols = ["G3", "G1", "G2"] if target_mode in ["pass_class", "grade_class"] else ["G3"]
-    # keep G1, G2 for regression
-    if target_mode == "G3_reg":
-        drop_cols = ["G3"]
-
+    # ALWAYS drop G1, G2 and G3 from features to focus on behavioral/early prevention
+    # keeping G1/G2 makes prediction too easy and masks root cause factors
+    # also drop non-predictive identifiers 'school' and 'reason' from notebook findings
+    drop_cols = ["G3", "G1", "G2", "school", "reason"]
+    
     feature_df = df.drop(columns=drop_cols, errors="ignore")
 
     # binary yes/no
@@ -94,7 +105,7 @@ def load_and_clean(dataset_key, target_mode, selected_features=None):
     X_scaled = scaler.fit_transform(X)
     cleaning_log.append("Applied StandardScaler to all numeric features")
 
-    return X_scaled, y, feature_names, task, cleaning_log, df
+    return X_scaled, y, feature_names, task, cleaning_log, df, scaler
 
 
 def get_model(model_key, task, seed=42):
@@ -200,11 +211,15 @@ def eda():
     # studytime vs G3
     study_g3 = df.groupby("studytime")["G3"].mean().round(2).to_dict()
 
+    # Walc vs G3
+    walc_g3 = df.groupby("Walc")["G3"].mean().round(2).to_dict()
+
     return jsonify({
         "correlations": {k: round(v, 4) for k, v in corr.items()},
         "g3_distribution": {int(k): int(v) for k, v in g3_counts.items()},
         "failures_vs_g3": {int(k): float(v) for k, v in fail_g3.items()},
         "studytime_vs_g3": {int(k): float(v) for k, v in study_g3.items()},
+        "alcohol_vs_g3": {int(k): float(v) for k, v in walc_g3.items()},
         "sex_pass": df.groupby("sex").apply(lambda x: round((x["G3"]>=10).mean()*100, 1)).to_dict(),
         "address_g3": df.groupby("address")["G3"].mean().round(2).to_dict(),
     })
@@ -222,7 +237,7 @@ def train():
     test_size = float(data.get("test_size", 0.2))
 
     try:
-        X, y, feature_names, task, cleaning_log, df_orig = load_and_clean(
+        X, y, feature_names, task, cleaning_log, df_orig, scaler = load_and_clean(
             dataset_key, target_mode, selected_features
         )
     except Exception as e:
@@ -232,11 +247,13 @@ def train():
         X, y, test_size=test_size, random_state=seed
     )
 
+    trained_models = {}
     results = []
     for model_key in selected_models:
         try:
             model = get_model(model_key, task, seed)
             model.fit(X_train, y_train)
+            trained_models[model_key] = model
             y_pred = model.predict(X_test)
 
             if task == "regression":
@@ -300,6 +317,86 @@ def train():
         valid.sort(key=lambda r: -r["metrics"].get("r2", -99))
     else:
         valid.sort(key=lambda r: -r["metrics"].get("accuracy", 0))
+    
+    # Save best to global state
+    if valid:
+        best_key = valid[0]["model_key"]
+        best_model = trained_models[best_key]
+        
+        # Store global results
+        APP_STATE["models"]["global"] = {
+            "model": best_model,
+            "scaler": scaler,
+            "feature_names": feature_names,
+            "task": task,
+            "metrics": valid[0]["metrics"],
+            "importance": valid[0]["feature_importance"]
+        }
+        
+        APP_STATE["dataset_key"] = dataset_key
+        APP_STATE["target_mode"] = target_mode
+        
+        # Capture categorical column stems
+        cat_stems = set()
+        for fn in feature_names:
+            if "_" in fn:
+                stem = fn.split("_")[0]
+                if stem in df_orig.columns:
+                    cat_stems.add(stem)
+        APP_STATE["categorical_cols"] = list(cat_stems)
+
+        # ─── Cluster-Specific Training ─────────────────────────────────────────
+        # Identify clusters for all rows
+        numeric_df = df_orig.select_dtypes(include="number")
+        X_cluster = numeric_df.drop(columns=["G1", "G2", "G3"], errors="ignore").values
+        c_scaler = StandardScaler()
+        X_c_scaled = c_scaler.fit_transform(X_cluster)
+        kmeans = KMeans(n_clusters=3, random_state=42, n_init=10)
+        clusters = kmeans.fit_predict(X_c_scaled)
+        
+        df_orig["_cluster"] = clusters
+        
+        for c in range(3):
+            c_mask = df_orig["_cluster"] == c
+            if c_mask.sum() < 20: continue # Skip tiny clusters
+            
+            # Prepare data for this cluster
+            X_c = X[c_mask]
+            y_c = y[c_mask]
+            
+            X_c_train, X_c_test, y_c_train, y_c_test = train_test_split(
+                X_c, y_c, test_size=0.2, random_state=seed
+            )
+            
+            c_results = []
+            c_trained = {}
+            for mk in selected_models:
+                try:
+                    m = get_model(mk, task, seed)
+                    m.fit(X_c_train, y_c_train)
+                    c_trained[mk] = m
+                    yp = m.predict(X_c_test)
+                    
+                    if task == "regression":
+                        score = r2_score(y_c_test, yp)
+                        m_metrics = {"r2": round(float(score), 4), "rmse": round(float(np.sqrt(mean_squared_error(y_c_test, yp))), 4)}
+                    else:
+                        score = accuracy_score(y_c_test, yp)
+                        m_metrics = {"accuracy": round(float(score), 4)}
+                    
+                    c_results.append({"model_key": mk, "score": score, "metrics": m_metrics})
+                except: continue
+            
+            if c_results:
+                c_results.sort(key=lambda x: -x["score"])
+                best_c = c_results[0]
+                best_c_model = c_trained[best_c["model_key"]]
+                
+                APP_STATE["models"][f"cluster_{c}"] = {
+                    "model_key": best_c["model_key"],
+                    "metrics": best_c["metrics"],
+                    "importance": compute_feature_importance(best_c_model, feature_names, X_c_train, y_c_train, task)
+                }
 
     return jsonify({
         "task": task,
@@ -310,6 +407,90 @@ def train():
         "n_features": len(feature_names),
         "cleaning_log": cleaning_log,
         "results": valid + [r for r in results if "error" in r],
+        "cluster_models": {k: v for k, v in APP_STATE["models"].items() if k.startswith("cluster_")}
+    })
+
+
+@app.route("/api/cluster", methods=["POST"])
+def cluster():
+    data = request.json
+    dataset_key = data.get("dataset", "mat")
+    df = pd.read_csv(DATASETS[dataset_key])
+    
+    # Preprocess for clustering: numeric only, scaled
+    numeric_df = df.select_dtypes(include="number")
+    # Drop targets if present
+    X = numeric_df.drop(columns=["G1", "G2", "G3"], errors="ignore").values
+    
+    scaler = StandardScaler()
+    X_scaled = scaler.fit_transform(X)
+    
+    # KMeans
+    kmeans = KMeans(n_clusters=3, random_state=42, n_init=10)
+    clusters = kmeans.fit_predict(X_scaled)
+    
+    # PCA for 2D visualization
+    pca = PCA(n_components=2)
+    X_pca = pca.fit_transform(X_scaled)
+    
+    # Global Evaluation Metrics
+    sil_score = float(silhouette_score(X_scaled, clusters))
+    ch_score = float(calinski_harabasz_score(X_scaled, clusters))
+    
+    # Prepare results
+    points = []
+    for i in range(len(X_pca)):
+        points.append({
+            "x": float(X_pca[i, 0]),
+            "y": float(X_pca[i, 1]),
+            "cluster": int(clusters[i]),
+            "g3": int(df.iloc[i]["G3"])
+        })
+    
+    # Cluster stats
+    df["cluster"] = clusters
+    cluster_stats = []
+    
+    for c in range(3):
+        c_df = df[df["cluster"] == c]
+        cluster_stats.append({
+            "id": c,
+            "count": len(c_df),
+            "g3_mean": round(c_df["G3"].mean(), 2),
+            "absences_mean": round(c_df["absences"].mean(), 2),
+            "studytime_mean": round(c_df["studytime"].mean(), 2),
+            "failures_mean": round(c_df["failures"].mean(), 2),
+            "higher_rate": round((c_df["higher"] == "yes").mean() * 100, 1),
+            "internet_rate": round((c_df["internet"] == "yes").mean() * 100, 1),
+            "alcohol_mean": round((c_df["Dalc"] + c_df["Walc"]).mean() / 2, 2)
+        })
+        
+    # Prepare Radar Chart data (Normalized 0-1 for comparison)
+    radar_data = []
+    # Key axes for the radar: G3, absences (inverted), studytime, failures (inverted), higher_rate, internet_rate
+    max_abs = df["absences"].max() or 1
+    
+    for c in range(3):
+        c_df = df[df["cluster"] == c]
+        radar_data.append({
+            "id": c,
+            "axes": [
+                {"axis": "Note G3", "value": round(c_df["G3"].mean() / 20, 2)},
+                {"axis": "Assiduité", "value": round(1 - (c_df["absences"].mean() / max_abs), 2)}, # Inverted: higher is better
+                {"axis": "Temps Étude", "value": round(c_df["studytime"].mean() / 4, 2)},
+                {"axis": "Réussite Passée", "value": round(1 - (c_df["failures"].mean() / 3), 2)}, # Inverted: higher is better
+                {"axis": "Ambition", "value": round((c_df["higher"] == "yes").mean(), 2)},
+                {"axis": "Vie Sociale", "value": round(1 - (c_df["goout"].mean() / 5), 2)} # Inverted: higher is better
+            ]
+        })
+        
+    return jsonify({
+        "points": points,
+        "stats": cluster_stats,
+        "radar": radar_data,
+        "silhouette_score": round(sil_score, 4),
+        "ch_score": round(ch_score, 2),
+        "explained_variance": [round(v, 4) for v in pca.explained_variance_ratio_]
     })
 
 
