@@ -1,40 +1,47 @@
-# Machine Learning Portfolio
+# Machine learning portfolio
 
-A professional collection of machine learning projects and analytical labs, focusing on predictive modeling, customer intelligence, and algorithmic optimization.
+This repository contains a professional collection of machine learning
+projects and analytical labs. The work focuses on predictive modeling,
+customer intelligence, and algorithmic optimization.
 
-## Executive Summaries
+## Executive summaries
 
-### E-commerce Customer Segmentation (Subject 01)
-Focused on **Customer Intelligence**, this project leverages unsupervised learning algorithms (K-Means and Hierarchical Clustering) to segment a retail customer base. By analyzing income and spending behavior, the model identifies five distinct customer segments, enabling targeted marketing strategies and improved retention.
+### E-commerce customer segmentation
 
-### Telecom Churn Prediction (Subject 02)
-A predictive modeling pipeline designed to analyze and forecast customer churn for a telecommunications provider. Using classification algorithms and exploratory data analysis, the project identifies key attrition drivers, allowing for proactive customer engagement to reduce turnover.
+This project focuses on customer intelligence, utilizing unsupervised learning
+algorithms (K-means and hierarchical clustering) to segment a retail customer
+base. By analyzing income and spending behavior, the model identifies five
+distinct customer segments, enabling targeted marketing and improved
+retention.
 
-### Student Success Analysis & Platform (Subject 03)
-An end-to-end analytical project aimed at improving academic outcomes for high school students. This project combines deep exploratory analysis with a Flask-based interactive platform. Using K-Means clustering and Random Forest importance, it identifies risk factors and provides pedagogical recommendations to support student success.
+### Telecom churn prediction
 
-## Repository Structure
+This predictive modeling pipeline forecasts customer churn for a
+telecommunications provider. Using classification algorithms and exploratory
+data analysis, the project identifies key attrition drivers to support
+proactive customer engagement.
 
-```text
-machine-learning-portfolio/
-├── data/                    # Specialized industry datasets
-│   └── raw/                 # Sources for banking, retail, healthcare, etc.
-├── mini-projects/           # End-to-end business subjects
-│   ├── subject-01-ecommerce/ # E-commerce Customer Segmentation
-│   ├── subject-02-telecom/   # Telecom Churn Prediction
-│   └── subject-03-student-success/ # Student Success Analysis & Platform
-└── labs-tp/                 # Technical labs and algorithm implementations
-    ├── basic-exercises/     # Foundations with NumPy and Pandas
-    ├── clustering/          # K-Means, DBSCAN, and CAH methodologies
-    ├── course-labs/         # Multi-model labs and case studies
-    └── regression/          # Gradient Descent and OLS from scratch
-```
+### Student success analysis and platform
 
-## Tech Stack
-*   **Languages**: Python
-*   **Libraries**: Scikit-learn, Pandas, NumPy
-*   **Visualization**: Matplotlib, Seaborn
-*   **Tools**: Jupyter Notebooks, Google Colab
+This project improves academic outcomes for high school students by combining
+deep exploratory analysis with a Flask-based interactive platform. It uses
+K-means clustering and random forest importance to identify risk factors and
+provide pedagogical recommendations.
 
-Authored by Youssef Fellah.  
-Developed for the Engineering Cycle - Mundiapolis University.
+## Repository structure
+
+- `data/`: Specialized industry datasets.
+- `mini-projects/`: End-to-end business subjects covering e-commerce, telecom,
+  and education.
+- `labs-tp/`: Technical labs and algorithm implementations for clustering,
+  regression, and data manipulation.
+
+## Tech stack
+
+- Languages: Python
+- Libraries: Scikit-learn, Pandas, NumPy
+- Visualization: Matplotlib, Seaborn
+- Tools: Jupyter Notebooks, Google Colab
+
+Authored by Youssef Fellah.
+Developed for the Engineering Cycle at Mundiapolis University.

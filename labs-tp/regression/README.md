@@ -1,82 +1,77 @@
-# Linear Regression Optimization: Algorithmic Implementation
+# Linear regression optimization: algorithmic implementation
 
-A comparative study and from-scratch implementation of Linear Regression algorithms in Python. This project explores the mathematical optimization of regression models using both iterative (Gradient Descent) and analytical (Normal Equation) approaches, bypassing high-level machine learning frameworks to focus on core algorithmic logic.
+This project provides a comparative study and implementation of linear
+regression algorithms in Python. It explores the mathematical optimization of
+regression models using iterative gradient descent and analytical normal
+equation approaches.
 
-## Technical Overview
+## Technical overview
 
-The system evaluates two distinct methodologies for solving the linear least squares problem, providing a deep-dive into optimization theory and numerical analysis.
+The system evaluates two methodologies for solving the linear least squares
+problem, focusing on optimization theory and numerical analysis.
 
-### Core Stack
-*   **Engine**: Python 3.10+
-*   **Numerical Analysis**: NumPy / Pandas
-*   **Data Visualization**: Matplotlib
-*   **Data Format**: Excel / OpenPyXL
+### Core stack
 
----
+- Engine: Python 3.10 or later
+- Numerical Analysis: NumPy and Pandas
+- Data Visualization: Matplotlib
+- Data Format: Excel (OpenPyXL)
 
-## Optimization Methodologies
+## Optimization methodologies
 
-### 1. Gradient Descent (Iterative Approach)
-A first-order iterative optimization algorithm for finding the local minimum of the Mean Squared Error (MSE) cost function.
-*   **Mechanism**: Implements partial derivatives (gradients) for weight ($m$) and bias ($b$) updates.
-*   **Mathematical Foundation**:
-    $$\theta_{j} := \theta_{j} - \alpha \frac{\partial}{\partial \theta_{j}} J(\theta)$$
-*   **Implementation**: Features convergence monitoring via cost history tracking and dynamic hyperparameter tuning (Learning Rate $\alpha$, Epochs).
+### 1. Gradient descent
 
-### 2. Normal Equation (Analytical Approach)
-A direct solution using linear algebra to find the global minimum of the cost function without iteration.
-*   **Mechanism**: Leverages the Ordinary Least Squares (OLS) closed-form solution.
-*   **Mathematical Foundation**:
-    $$\theta = (X^{T}X)^{-1}X^{T}y$$
-*   **Implementation**: Utilizes NumPy matrix operations to handle the design matrix and target vectors, providing an exact solution for datasets where $X^{T}X$ is invertible.
+This first-order iterative optimization algorithm finds the local minimum of
+the mean squared error (MSE) cost function.
+- Mechanism: Implements partial derivatives for weight and bias updates.
+- Implementation: Monitors convergence through cost history tracking and
+  dynamic hyperparameter tuning.
 
----
+### 2. Normal equation
 
-## Technical Features
+This analytical approach uses linear algebra to find the global minimum of the
+cost function without iteration.
+- Mechanism: Uses the ordinary least squares (OLS) closed-form solution.
+- Implementation: Utilizes NumPy matrix operations for exact solutions on
+  compatible datasets.
 
-### Data Processing Pipeline
-*   **Ingestion**: Direct extraction of features and labels from raw Excel data.
-*   **Feature Mapping**: Automated mapping of independent ($X$) and dependent ($Y$) variables.
-*   **Validation**: Error handling for missing data or invalid file paths.
+## Technical features
 
-### Analytics & Visualization
-*   **Cost Convergence**: Graphical representation of error reduction over time to validate learning rate stability.
-*   **Regression Modeling**: Overlay of the calculated model $Y = mX + b$ against the raw scatter data.
-*   **Performance Comparison**: Evaluation of iteration count vs. precision for the Gradient Descent engine.
+### Data processing pipeline
 
----
+- Ingestion: Extracts features and labels from raw Excel data.
+- Feature mapping: Automatically maps independent and dependent variables.
+- Validation: Implements error handling for missing data or invalid paths.
 
-## Project Structure
+### Analytics and visualization
 
-```text
-├── gradient-descent.py # Iterative optimization engine
-├── linear-regression.py  # Analytical regression model
-├── test.xlsx           # Sample dataset for validation
-└── README.md           # System documentation
-```
+- Cost convergence: Represents error reduction over time to validate learning
+  rate stability.
+- Regression modeling: Overlays the calculated model against raw scatter data.
+- Performance comparison: Evaluates iteration count versus precision for
+  gradient descent.
 
----
+## Project structure
 
-## Installation & Deployment
+- `gradient-descent.py`: The iterative optimization engine.
+- `linear-regression.py`: The analytical regression model.
+- `test.xlsx`: Sample dataset for validation.
 
-### Prerequisites
-*   Python 3.10 (or higher)
-*   Virtual Environment (Recommended)
+## Installation and deployment
 
-### Setup Sequence
-1.  **Initialize Environment**:
-    ```bash
-    python -m venv venv
-    source venv/bin/activate
-    ```
-2.  **Install Dependencies**:
-    ```bash
-    pip install pandas numpy matplotlib openpyxl
-    ```
-3.  **Execute Model**:
-    ```bash
-    python gradient-descent.py
-    ```
+1. Initialize the environment:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate
+   ```
+2. Install dependencies:
+   ```bash
+   pip install pandas numpy matplotlib openpyxl
+   ```
+3. Execute the model:
+   ```bash
+   python gradient-descent.py
+   ```
 
-Authored by Youssef Fellah.  
-Developed for the Engineering Cycle - Mundiapolis University.
+Authored by Youssef Fellah.
+Developed for the Engineering Cycle at Mundiapolis University.

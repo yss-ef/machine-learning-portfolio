@@ -1,38 +1,33 @@
-# Machine Learning Laboratory: Course Labs & Case Studies
+# Machine learning laboratory: course labs and case studies
 
-A comprehensive collection of machine learning laboratories and practical applications, covering both supervised and unsupervised learning paradigms across various academic modules.
+This repository centralizes machine learning laboratories and practical
+applications. It covers supervised and unsupervised learning paradigms
+across various academic modules.
 
----
+## Academic scope
 
-## Academic Scope
+The collection features lab assignments from the Machine Learning course:
+- Supervised learning: Implements classification and regression models.
+- Unsupervised learning: Explores clustering and dimensionality reduction.
+- Mini-projects: Features case studies on student performance and client data
+  analysis.
 
-This repository centralizes various lab assignments conducted during the Machine Learning course, featuring:
-*   **Supervised Learning:** Implementation of classification and regression models.
-*   **Unsupervised Learning:** Exploration of clustering and dimensionality reduction.
-*   **Mini-Projects:** Real-world case studies involving student performance and client data analysis.
+## Technical stack
 
-## Technical Stack
+- Language: Python 3.10 or later
+- Libraries: Scikit-learn, Pandas, NumPy, Matplotlib, Seaborn
+- Environment: Jupyter Notebooks
 
-*   **Language**: Python 3.10+
-*   **Libraries**: `scikit-learn`, `pandas`, `numpy`, `matplotlib`, `seaborn`
-*   **Environment**: Jupyter Notebooks
-## Project Structure
+## Project structure
 
-```text
-├── lab-1-mini-projects/
-│   └── mini-projects-suite.ipynb
-├── machine-learning-modules/
-...
-│   ├── non-supervise/
-│   │   └── main.ipynb
-│   └── supervise/
-│       └── main.ipynb
-└── README.md
-```
+- `lab-1-mini-projects/`: Contains a suite of mini-projects.
+- `machine-learning-modules/`: Includes sub-directories for supervised and
+  unsupervised learning implementations.
 
-## Getting Started
+## Getting started
 
 ### Installation
+
 1. Clone the repository:
    ```bash
    git clone git@github.com:yss-ef/machine-learning-portfolio.git
@@ -42,5 +37,5 @@ This repository centralizes various lab assignments conducted during the Machine
    pip install scikit-learn pandas numpy matplotlib seaborn
    ```
 
-Authored by Youssef Fellah.  
-Developed for the Engineering Cycle - Mundiapolis University.
+Authored by Youssef Fellah.
+Developed for the Engineering Cycle at Mundiapolis University.

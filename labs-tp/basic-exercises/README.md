@@ -1,44 +1,46 @@
-# Fundamentals of Machine Learning: Practical Exercises
+# Fundamentals of machine learning: practical exercises
 
-A collection of foundational exercises and implementation scripts focusing on the core building blocks of machine learning, including data manipulation and basic algorithmic logic.
+This collection of exercises and scripts focuses on the core building blocks
+of machine learning, including data manipulation and foundational algorithmic
+logic.
 
----
+## Core implementations
 
-## Core Implementations
+The repository serves as a laboratory for mastering numerical computing and
+structured programming:
+- Data structures: Implements exercises using NumPy and Pandas paradigms.
+- Scripting: Uses procedural Python scripts for data transformation and
+  analysis.
 
-This repository serves as a laboratory for mastering the basics of numerical computing and structured programming in a machine learning context:
-*   **Data Structures:** Custom implementations and exercises using `numpy` and `pandas` paradigms.
-*   **Scripting:** Procedural Python scripts for data transformation and analysis.
+## Technical stack
 
-## Technical Stack
+- Language: Python 3.10 or later
+- Core libraries: NumPy, Pandas
 
-*   **Language:** Python 3.10+
-*   **Core Libraries:** `numpy`, `pandas`
+## Project structure
 
-## Project Structure
+- `knn-basics.py`: Fundamental logic exercise.
+- `decision-tree-basics.py`: Data manipulation exercise.
+- `preprocessing-foundations.py`: Main execution script.
+- `np/`: NumPy specific exercises.
+- `pd/`: Pandas specific exercises.
 
-```text
-├── knn-basics.py       # Exercise 1: Fundamental logic
-├── decision-tree-basics.py       # Exercise 2: Data manipulation
-├── preprocessing-foundations.py      # Main execution script
-├── np/          # NumPy specific exercises
-└── pd/          # Pandas specific exercises
-```
-
-## Getting Started
+## Getting started
 
 ### Prerequisites
-*   Python 3.x
+
+- Python 3.x
 
 ### Installation
+
 1. Clone the repository:
    ```bash
    git clone git@github.com:yss-ef/ml-basics-exercises.git
    ```
-2. Run any script directly:
+2. Execute the main script:
    ```bash
    python preprocessing-foundations.py
    ```
 
-Authored by Youssef Fellah.  
-Developed for the Engineering Cycle - Mundiapolis University.
+Authored by Youssef Fellah.
+Developed for the Engineering Cycle at Mundiapolis University.

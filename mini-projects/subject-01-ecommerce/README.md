@@ -1,63 +1,66 @@
-# E-commerce Customer Segmentation: Unsupervised Machine Learning for Retail Analytics
+# E-commerce customer segmentation: retail analytics
 
-An end-to-end data science project focused on **Customer Intelligence**. This project uses unsupervised learning algorithms to segment a retail customer base into distinct groups based on annual income, spending behavior, and demographic profiles.
+This project uses unsupervised learning algorithms to segment a retail
+customer base into distinct groups. The segmentation is based on annual
+income, spending behavior, and demographic profiles.
 
-## Machine Learning Concepts & Theory
+## Machine learning concepts
 
-### 1. Unsupervised Learning & Clustering
-Unlike supervised learning, clustering does not rely on predefined labels. It identifies hidden patterns in data by grouping similar data points together based on their distance in a multi-dimensional feature space.
+### 1. Unsupervised learning and clustering
 
-### 2. Deep Dive: K-Means Clustering
-K-Means is a centroid-based algorithm that partitions $n$ observations into $K$ clusters.
-*   **The Centroid Logic**: The algorithm iteratively assigns points to the nearest cluster center and updates the center as the mean of the assigned points.
-*   **The Elbow Method**: To determine the optimal $K$, we calculate the **Within-Cluster Sum of Squares (WCSS)**. The "elbow" point in the WCSS graph indicates where adding more clusters no longer provides significant information gain.
+Clustering identifies hidden patterns in data by grouping similar data points
+together. It does not rely on predefined labels.
 
-### 3. Hierarchical Clustering (CAH)
-This project also implements **Agglomerative Hierarchical Clustering**, which builds a hierarchy of clusters.
-*   **Dendrograms**: A tree-like diagram used to visualize the sequence of merges. It allows us to determine the optimal number of clusters by observing the longest vertical distance without crossing horizontal lines.
-*   **Linkage Criteria**: Uses "Ward's Method" to minimize the variance within each cluster during the merging process.
+### 2. K-means clustering
 
----
+K-means is a centroid-based algorithm that partitions observations into
+distinct clusters.
+- Centroid logic: The algorithm iteratively assigns points to the nearest
+  cluster center and updates the center based on the mean of those points.
+- Elbow method: The optimal number of clusters is determined by calculating
+  the within-cluster sum of squares (WCSS).
 
-## Data Analysis & Modeling Logic
+### 3. Hierarchical clustering (CAH)
 
-The project follows a rigorous Data Science lifecycle:
+Agglomerative hierarchical clustering builds a hierarchy of clusters.
+- Dendrograms: These tree-like diagrams visualize the sequence of merges and
+  help determine the optimal number of clusters.
+- Linkage criteria: The project uses Ward's method to minimize variance within
+  each cluster during merging.
 
-1.  **Exploratory Data Analysis (EDA)**: Visualizing distributions of Age, Annual Income, and Spending Score using Seaborn and Matplotlib.
-2.  **Feature Engineering**: Selecting relevant features for segmentation (Income vs. Spending Score) and handling data scaling.
-3.  **Model Implementation**:
-    *   **K-Means**: Identifying 5 distinct segments (The VIPs, The At-Risk, The Careful, The Average, and The Spenders).
-    *   **Hierarchical Clustering**: Validating cluster stability using dendrogram analysis.
-4.  **Explicability**: Interpreting the clusters to provide actionable business recommendations.
+## Data analysis and modeling logic
 
----
+The project follows a standard data science lifecycle:
 
-## Project Structure
+1. Exploratory data analysis (EDA): Visualizes distributions of age, income,
+   and spending scores.
+2. Feature engineering: Selects relevant features for segmentation and handles
+   data scaling.
+3. Model implementation: Uses K-means and hierarchical clustering to identify
+   and validate distinct customer segments.
+4. Explicability: Interprets clusters to provide actionable business
+   recommendations.
 
-*   `customer-segmentation.ipynb`: Complete analysis containing data cleaning, visualization, and modeling.
-*   `customer-segmentation-report.pptx`: Executive summary and business results presentation.
-*   `*.png`: Exported visualizations (Elbow Method, Dendrograms, K-Means Clusters).
+## Project structure
 
----
+- `customer-segmentation.ipynb`: Contains data cleaning, visualization, and
+  modeling analysis.
+- `customer-segmentation-report.pptx`: Provides an executive summary and
+  business results.
+- `*.png`: Includes exported visualizations like dendrograms and cluster
+  plots.
 
-## Getting Started
+## Getting started
 
-### Prerequisites
-*   Python 3.10+
-*   Jupyter Notebook or Google Colab
-*   Libraries: `pandas`, `numpy`, `scikit-learn`, `matplotlib`, `seaborn`
-
-### Installation
-1. **Clone the repository**:
+1. Clone the repository:
    ```bash
    git clone https://github.com/yss-ef/machine-learning-portfolio.git
    ```
-2. **Install dependencies**:
+2. Install dependencies:
    ```bash
    pip install pandas numpy scikit-learn matplotlib seaborn
    ```
-3. **Run the Analysis**:
-   Open `customer-segmentation.ipynb` in your preferred notebook environment.
+3. Run the analysis in a notebook environment.
 
-Authored by Youssef Fellah.  
-Developed for the Engineering Cycle - Mundiapolis University.
+Authored by Youssef Fellah.
+Developed for the Engineering Cycle at Mundiapolis University.
